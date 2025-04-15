@@ -35,7 +35,7 @@ public class AccountService {
 
 	public Usuario createUser(RegisterUserDTO req) {
 
-		if (userRepository.findByMail(req.getMail()).isPresent()) {
+		if (userRepository.findByCorreo(req.getMail()).isPresent()) {
 			throw new IllegalArgumentException("El correo ya está registrado");
 		}
 		
@@ -77,7 +77,7 @@ public class AccountService {
 		user.setApellido(req.getApellido());
 		user.setNmrDocumento(req.getNmrDocumento());
 		user.setTelefono(req.getTelefono());
-		user.setMail(req.getMail());
+		user.setCorreo(req.getMail());
 		user.setContrasenia(passwordEncoder.encode(req.getContrasenia()));
 		user.setRol("user");
 
@@ -87,7 +87,7 @@ public class AccountService {
 	public Usuario updateUser(UpdateUserDTO req) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    Usuario user = userRepository.findByMail(emailAutenticado)
+	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 	    
 		if (!vt.hasOnlyLettersAndSpaces(req.getNombre())) {
@@ -124,7 +124,7 @@ public class AccountService {
 	
 	public String createTokenFromAuth(LoginDTO request) {
 
-		Usuario usuario = userRepository.findByMail(request.getMail()).orElse(null);
+		Usuario usuario = userRepository.findByCorreo(request.getMail()).orElse(null);
 
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {
 			return jwtService.generateToken(request.getMail());
@@ -137,7 +137,7 @@ public class AccountService {
 	public String updateClave(UpdatePasswordDTO req) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    Usuario user = userRepository.findByMail(emailAutenticado)
+	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
 		if (!passwordEncoder.matches(req.getContraseniaActual(), user.getContrasenia())) {
@@ -162,7 +162,7 @@ public class AccountService {
 
 	    
 		if (authentication != null) {
-		    Usuario user = userRepository.findByMail(authentication.getName())
+		    Usuario user = userRepository.findByCorreo(authentication.getName())
 		            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 		    if(user != null) {
 		    	return user;

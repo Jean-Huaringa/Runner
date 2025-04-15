@@ -8,5 +8,5 @@ import com.cibertec.runner.model.Usuario;
 
 public interface IUsuarioRepository extends JpaRepository<Usuario, Integer>{
 
-    Optional<Usuario> findByMail(String mail);
+    Optional<Usuario> findByCorreo(String mail);
 }
