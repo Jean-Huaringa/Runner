@@ -25,7 +25,9 @@ public class TrabajadorServiceImp implements TrabajadorService {
     public Map<String, Object> registrar(Trabajador trabajador) {
         Map<String, Object> respuesta = new HashMap<>();
         try {
+        	
             trabajador.setEstado("A");
+            
             Trabajador guardado = trabajadorRepo.save(trabajador);
             respuesta.put("mensaje", "Trabajador registrado correctamente");
             respuesta.put("fecha", new Date());

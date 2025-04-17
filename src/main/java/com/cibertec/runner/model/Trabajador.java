@@ -6,11 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -21,11 +18,8 @@ import lombok.Data;
 public class Trabajador {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_tbj", nullable = false)
 	private Integer id;
-
-	@Column(name = "rol", nullable = false)
-	private Double rol;
 	
 	@Column(name = "salario", nullable = false)
 	private Double salario;
@@ -40,12 +34,11 @@ public class Trabajador {
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
     
-    @Column(name = "fecha_salida", nullable = false, updatable = false)
-    @CreationTimestamp
+    @Column(name = "fecha_salida")
     private LocalDateTime fechaSalida;
     
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "id_tbj", referencedColumnName = "id_usr")
+//    @MapsId
+    @JoinColumn(name = "id_tbj", referencedColumnName = "id_usr", insertable = false, updatable = false)
     private Usuario usuario;
 }
