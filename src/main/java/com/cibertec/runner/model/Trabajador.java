@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -19,6 +21,7 @@ import lombok.Data;
 public class Trabajador {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(name = "rol", nullable = false)
@@ -27,8 +30,8 @@ public class Trabajador {
 	@Column(name = "salario", nullable = false)
 	private Double salario;
 	
-    @Column(name = "estado", nullable = false)
-    private Boolean estado;
+	@Column(name = "estado", nullable = false, length = 1)
+	private String estado;
 
 	@Column(name = "horas_laborales", nullable = false)
 	private int horasLaborales;
