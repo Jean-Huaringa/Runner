@@ -9,11 +9,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.model.Marca;
 import com.cibertec.runner.repository.IMarcaRepository;
 import com.cibertec.runner.service.MarcaService;
 
+@Service
 public class MarcaServiceImp implements MarcaService{
 	
 	@Autowired
