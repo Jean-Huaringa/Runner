@@ -24,27 +24,27 @@ public class CategoriaController {
 	@Autowired
 	private CategoriaServiceImp cs;
 	
-	@GetMapping
+	@GetMapping("/listado")
 	public ResponseEntity<Map<String, Object>> list() {
 		return cs.listCategorias();
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/buscar/{id}")
 	public ResponseEntity<Map<String, Object>> listById(@PathVariable Integer id) {
 		return cs.listCategoriaById(id);
 	}
 	
-	@PostMapping
+	@PostMapping("/crear")
 	public ResponseEntity<Map<String, Object>> create(@RequestBody Categoria c) {
 		return cs.createCategoria(c);
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/actualizar/{id}")
 	public ResponseEntity<Map<String, Object>> update(@RequestBody Categoria c, @PathVariable Integer id) {
 		return cs.updateCategoria(c, id);
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/eliminar/{id}")
 	public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
 		return cs.deleteCategoria(id);
 	}
