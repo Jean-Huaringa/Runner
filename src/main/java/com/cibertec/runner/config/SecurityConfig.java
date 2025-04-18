@@ -39,7 +39,17 @@ public class SecurityConfig {
 																	"api/marca/buscar/{id}", 
 																	"api/marca/crear", 
 																	"api/marca/actualizar/{id}", 
-																	"api/marca/eliminar/{id}").permitAll() // Permite acceso sin login a estas rutas
+																	"api/marca/eliminar/{id}", 
+																	"api/persona/listado", 
+																	"api/persona/buscar/{id}", 
+																	"api/persona/crear", 
+																	"api/persona/actualizar/{id}", 
+																	"api/persona/eliminar/{id}", 
+																	"api/material/listado", 
+																	"api/material/buscar/{id}", 
+																	"api/material/crear", 
+																	"api/material/actualizar/{id}", 
+																	"api/material/eliminar/{id}").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 
