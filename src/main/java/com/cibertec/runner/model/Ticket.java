@@ -1,6 +1,8 @@
 package com.cibertec.runner.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +28,8 @@ public class Ticket {
 	private String direccion;
 	
 	@Column(name = "fecha_creacion")
-	private Timestamp fechaCreacion;
+    @CreationTimestamp
+	private LocalDateTime fechaCreacion;
 	
 	@Column(name = "id_usr", nullable = false)
 	private Integer idUsr;

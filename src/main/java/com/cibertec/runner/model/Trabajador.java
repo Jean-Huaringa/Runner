@@ -20,9 +20,6 @@ public class Trabajador {
 	
 	@Id
 	private Integer id;
-
-	@Column(name = "rol", nullable = false)
-	private Double rol;
 	
 	@Column(name = "salario", nullable = false)
 	private Double salario;
@@ -37,8 +34,7 @@ public class Trabajador {
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
     
-    @Column(name = "fecha_salida", nullable = false, updatable = false)
-    @CreationTimestamp
+    @Column(name = "fecha_salida", nullable = true, updatable = true)
     private LocalDateTime fechaSalida;
     
     @OneToOne
