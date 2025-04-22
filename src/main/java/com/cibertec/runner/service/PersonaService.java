@@ -20,6 +20,6 @@ public interface PersonaService {
 	// ACTUALIZAR PERSONA
 	public ResponseEntity<Map<String, Object>> updatePersona(Persona p, Integer id);
 	
-	// ELIMINAR PERSONA - SIN USO
+	// ELIMINAR PERSONA
 	public ResponseEntity<Map<String, Object>> deletePersona(Integer id);
 }

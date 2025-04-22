@@ -20,7 +20,7 @@ public interface CategoriaService {
 	// ACTUALIZAR CATEGORIA
 	public ResponseEntity<Map<String, Object>> updateCategoria(Categoria c, Integer id);
 	
-	// ELIMINAR CATEGORIA - SIN USO
+	// ELIMINAR CATEGORIA
 	public ResponseEntity<Map<String, Object>> deleteCategoria(Integer id);
 	
 }

@@ -20,6 +20,6 @@ public interface MarcaService {
 	// ACTUALIZAR MARCA
 	public ResponseEntity<Map<String, Object>> updateMarca(Marca m, Integer id);
 	
-	// ELIMINAR MARCA - SIN USO
+	// ELIMINAR MARCA
 	public ResponseEntity<Map<String, Object>> deleteMarca(Integer id);
 }
