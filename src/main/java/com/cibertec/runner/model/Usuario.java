@@ -57,7 +57,8 @@ public class Usuario {
 	@Column(name = "id_dto", nullable = false)
 	private Integer idDto;
 	
-    @ManyToOne
+//	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "id_dto", referencedColumnName = "id_dto", insertable = false, updatable = false)
     private Distrito distrito;
 }

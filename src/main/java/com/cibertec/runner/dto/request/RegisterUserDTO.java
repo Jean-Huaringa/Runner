@@ -1,4 +1,4 @@
-package com.cibertec.runner.dto;
+package com.cibertec.runner.dto.request;
 
 import lombok.Data;
 
@@ -8,6 +8,7 @@ public class RegisterUserDTO {
 	private String apellido;
 	private String nmrDocumento;
 	private String telefono;
-	private String mail;
+	private String correo;
 	private String contrasenia;
+	private int idDto;
 }

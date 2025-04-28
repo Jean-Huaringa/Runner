@@ -17,11 +17,11 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 		
 		// Permite al Frontend con esta (url) hacer las solicitudes HTTP
-		config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
 		// Los permisos que le estoy dando al Frond
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		// Cabeceras permitidas
-		config.setAllowedHeaders(Arrays.asList("Authorization"));
+		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 		// Para permitir el envío de cookies o tokens
 		config.setAllowCredentials(true);
 

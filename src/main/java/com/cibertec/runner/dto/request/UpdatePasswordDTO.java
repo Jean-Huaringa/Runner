@@ -1,4 +1,4 @@
-package com.cibertec.runner.dto;
+package com.cibertec.runner.dto.request;
 import lombok.Data;
 
 @Data

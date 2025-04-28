@@ -12,8 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-@Service // la clase se crea
-//gestiona la validación y creación de tokens JWT.
+@Service // la clase se crea gestiona la validación y creación de tokens JWT.
 public class JwtService {
 
 	// Se define una clave secreta larga (mínimo 32 caracteres)
@@ -25,17 +24,12 @@ public class JwtService {
 		return Keys.hmacShaKeyFor(Base64.getEncoder().encode(secretKey.getBytes()));
 	}
 
-	// Cuando se genera un toquen se implementa la fecha de caducidad entre otras
-	// caracteristicas, pero la fecha u hora de cadusidad son las que mas importan
-	// por que con ello podemos saber si el token aun sirve o no
-	// Genera un token JWT
 	public String generateToken(String mail) {
-		return Jwts.builder().setSubject(mail) // el toquen se genera mediante el correo electronico
-				.setIssuedAt(new Date()) // Fecha y hora en la que se generó el token
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expira en 1 hora
-				.signWith(getSigningKey(), SignatureAlgorithm.HS256) // le dice a la biblioteca JWT que firme el token
-																		// usando las dos variables que se ven
-				.compact(); // Devuelve el token como una cadena (String)
+		return Jwts.builder().setSubject(mail)
+				.setIssuedAt(new Date()) 
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // el ultimo son los minutos que dura el token en minutos 
+				.signWith(getSigningKey(), SignatureAlgorithm.HS256)
+				.compact();
 	}
 
 	// Extrae el mail del token

@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_producto", uniqueConstraints = { @UniqueConstraint (columnNames = { "id_prd", "id_tll", "id_clr" }) })
+@Table(name = "tb_producto", uniqueConstraints = { @UniqueConstraint (columnNames = { "idMdl", "id_tll", "id_clr" }) })
 public class Producto {
 
     @Id

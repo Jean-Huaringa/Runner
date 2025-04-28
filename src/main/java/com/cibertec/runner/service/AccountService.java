@@ -8,18 +8,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.dto.LoginDTO;
-import com.cibertec.runner.dto.RegisterUserDTO;
-import com.cibertec.runner.dto.UpdatePasswordDTO;
-import com.cibertec.runner.dto.UpdateUserDTO;
+import com.cibertec.runner.dto.request.LoginDTO;
+import com.cibertec.runner.dto.request.RegisterUserDTO;
+import com.cibertec.runner.dto.request.UpdatePasswordDTO;
+import com.cibertec.runner.dto.request.UpdateUserDTO;
+import com.cibertec.runner.model.Distrito;
 import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.repository.IUsuarioRepository;
 import com.cibertec.runner.util.ValidateText;
-
-// log in
-// sign up
-// access
-// account
 
 @Service
 public class AccountService {
@@ -31,129 +27,120 @@ public class AccountService {
 	@Autowired
 	private JwtService jwtService;
 	@Autowired
+	private DistritoService distritoSer;
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Usuario createUser(RegisterUserDTO req) {
+	public Usuario registerUser(RegisterUserDTO request) {
 
-		if (userRepository.findByCorreo(req.getMail()).isPresent()) {
+		if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
 			throw new IllegalArgumentException("El correo ya está registrado");
 		}
 		
-		if (!vt.hasOnlyLettersAndSpaces(req.getNombre())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar letras (nombre)");
-		} else if (!vt.hasValidLength(req.getNombre(), 2, 30)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 10 y 30 caracteres.");		}
+		vt.isRequired(request.getNombre(), "Nombre");
+		vt.hasOnlyLettersAndSpaces(request.getNombre(), "Nombre");
+		vt.hasValidLength(request.getNombre(), 2, 30, "Nombre");
 
-		if (!vt.hasValidLength(req.getApellido(), 2, 30)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 2 y 30 caracteres.");
-		} else if (!vt.hasOnlyLettersAndSpaces(req.getApellido())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar letras");
-		}
+		vt.hasValidLength(request.getApellido(), 2, 30, "Apellido");
+		vt.hasOnlyLettersAndSpaces(request.getApellido(), "Apellido");
 
-		if (!vt.hasOnlyNumbers(req.getNmrDocumento())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar numeros (telefono)");
-		} else if (!vt.hasValidLength(req.getNmrDocumento(), 8, 12)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 8 y 12 caracteres.");
-		}
+		vt.hasOnlyNumbers(request.getNmrDocumento(), "Número de documento");
+		vt.hasValidLength(request.getNmrDocumento(), 8, 12, "Número de documento");
 
-		if (!vt.hasOnlyNumbers(req.getTelefono())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar numeros (telefono)");
-		} else if (!vt.hasValidLength(req.getTelefono(), 9, 12)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 9 y 12 caracteres.");
-		}
+		vt.hasOnlyNumbers(request.getTelefono(), "Teléfono");
+		vt.hasValidLength(request.getTelefono(), 9, 12, "Teléfono");
 
-		if (!vt.isValidMail(req.getMail())) {
-			throw new IllegalArgumentException ("El gmail no tiene la estructura correcta.");
-		}
+		vt.isValidGmail(request.getCorreo());
 
-		if (!vt.hasValidLength(req.getContrasenia(), 10, 60)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 10 y 60 caracteres.");
-		} else if (!vt.hasNoneCharacterDanger(req.getContrasenia())) {
-			throw new IllegalArgumentException ("Esta intento ingresar caracteres especiales que son aceptados");
-		}
+		vt.hasValidLength(request.getContrasenia(), 5, 60, "Contraseña");
+		vt.hasNoneCharacterDanger(request.getContrasenia(), "Contraseña");
 
 		Usuario user = new Usuario();
-		user.setNombre(req.getNombre());
-		user.setApellido(req.getApellido());
-		user.setNmrDocumento(req.getNmrDocumento());
-		user.setTelefono(req.getTelefono());
-		user.setCorreo(req.getMail());
-		user.setContrasenia(passwordEncoder.encode(req.getContrasenia()));
-		user.setRol("user");
+		user.setNombre(request.getNombre());
+		user.setApellido(request.getApellido());
+		user.setNmrDocumento(request.getNmrDocumento());
+		user.setTelefono(request.getTelefono());
+		user.setCorreo(request.getCorreo());
+		user.setContrasenia(passwordEncoder.encode(request.getContrasenia()));
+		user.setRol("USER");
+		
+		Distrito d = distritoSer.findById(request.getIdDto());
+		if(d != null) {
+			user.setIdDto(request.getIdDto());
+		}else {
+			throw new RuntimeException("No se encontro un distrito");
+		}
 
 		return userRepository.save(user);
 	}
 
-	public Usuario updateUser(UpdateUserDTO req) {
+	public Usuario updateUser(UpdateUserDTO request) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
 	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-	    
-		if (!vt.hasOnlyLettersAndSpaces(req.getNombre())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar letras (nombre)");
-		} else if (!vt.hasValidLength(req.getNombre(), 2, 30)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 10 y 30 caracteres.");		}
 
-		if (!vt.hasValidLength(req.getApellido(), 2, 30)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 2 y 30 caracteres.");
-		} else if (!vt.hasOnlyLettersAndSpaces(req.getApellido())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar letras");
-		}
+		vt.isRequired(request.getNombre(), "Nombre");
+		vt.hasOnlyLettersAndSpaces(request.getNombre(), "Nombre");
+		vt.hasValidLength(request.getNombre(), 2, 30, "Nombre");
 
-		if (!vt.hasOnlyNumbers(req.getNmrDocumento())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar numeros (telefono)");
-		} else if (!vt.hasValidLength(req.getNmrDocumento(), 8, 12)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 8 y 12 caracteres.");
-		}
+		vt.isRequired(request.getApellido(), "Apellido");
+		vt.hasValidLength(request.getApellido(), 2, 30, "Apellido");
+		vt.hasOnlyLettersAndSpaces(request.getApellido(), "Apellido");
 
-		if (!vt.hasOnlyNumbers(req.getTelefono())) {
-			throw new IllegalArgumentException ("Solo puedes ingresar numeros (telefono)");
-		} else if (!vt.hasValidLength(req.getTelefono(), 9, 12)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 9 y 12 caracteres.");
-		}
+		vt.isRequired(request.getNmrDocumento(), "Nmr de documento");
+		vt.hasOnlyNumbers(request.getNmrDocumento(), "Nmr de documento");
+		vt.hasValidLength(request.getNmrDocumento(), 8, 12, "Nmr de documento");
+
+		vt.isRequired(request.getTelefono(), "Telefono");
+		vt.hasOnlyNumbers(request.getTelefono(), "Telefono");
+		vt.hasValidLength(request.getTelefono(), 9, 12, "Telefono");
 
 
-	    user.setNombre(req.getNombre());
-	    user.setApellido(req.getApellido());
-	    user.setNmrDocumento(req.getNmrDocumento());
-	    user.setTelefono(req.getTelefono());
+	    user.setNombre(request.getNombre());
+	    user.setApellido(request.getApellido());
+	    user.setNmrDocumento(request.getNmrDocumento());
+	    user.setTelefono(request.getTelefono());
 
 	    return userRepository.save(user);
 	}
 	
-	public String createTokenFromAuth(LoginDTO request) {
+	public String signin(LoginDTO request) {
 
-		Usuario usuario = userRepository.findByCorreo(request.getMail()).orElse(null);
+		Usuario usuario = userRepository.findByCorreo(request.getCorreo()).orElse(null);
 
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {
-			return jwtService.generateToken(request.getMail());
+			return jwtService.generateToken(request.getCorreo());
 		} else {
-			throw new RuntimeException("Credenciales incorrectas");
+		    throw new BadCredentialsException("Usuario y/o contraseña incorrecta");
 		}
 
 	}
 
-	public String updateClave(UpdatePasswordDTO req) {
+	public String updateClave(UpdatePasswordDTO request) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
+		vt.isRequired(request.getContraseniaActual(), "La contraseña actual");
+		vt.hasNoneCharacterDanger(request.getContraseniaActual(), "La contraseña actual");
+		
+		vt.isRequired(request.getNuevaContrasenia(), "La nueva contraseña");
+		
 	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-		if (!passwordEncoder.matches(req.getContraseniaActual(), user.getContrasenia())) {
+		
+		if (!passwordEncoder.matches(request.getContraseniaActual(), user.getContrasenia())) {
 			throw new BadCredentialsException("La contraseña actual es incorrecta");
 		}
 
-		if (!vt.hasValidLength(req.getNuevaContrasenia(), 10, 60)) {
-			throw new IllegalArgumentException ("El texto debe tener entre 10 y 60 caracteres.");
-		} else if (!vt.hasNoneCharacterDanger(req.getNuevaContrasenia())) {
-			throw new IllegalArgumentException ("Esta intento ingresar caracteres especiales que son aceptados");
-		}
+		vt.hasValidLength(request.getNuevaContrasenia(), 5, 60, "Contraseña");
+		vt.hasNoneCharacterDanger(request.getNuevaContrasenia(), "Contraseña");
+		
 
-		String newPasswordEncrypted = passwordEncoder.encode(req.getNuevaContrasenia());
+		String newPasswordEncrypted = passwordEncoder.encode(request.getNuevaContrasenia());
 		user.setContrasenia(newPasswordEncrypted);
 		userRepository.save(user);
-		return "Contraseña correcta";
+		return "La contraseña se a actualizado correctamente";
 	}
 
 	public Usuario getUsuarioLogueado() {
