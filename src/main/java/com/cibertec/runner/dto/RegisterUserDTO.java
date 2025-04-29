@@ -8,6 +8,7 @@ public class RegisterUserDTO {
 	private String apellido;
 	private String nmrDocumento;
 	private String telefono;
-	private String mail;
 	private String contrasenia;
+	private String correo;
+	private String rol;
 }

@@ -35,7 +35,7 @@ public class AccountService {
 
 	public Usuario createUser(RegisterUserDTO req) {
 
-		if (userRepository.findByMail(req.getMail()).isPresent()) {
+		if (userRepository.findByCorreo(req.getCorreo()).isPresent()) {
 			throw new IllegalArgumentException("El correo ya está registrado");
 		}
 		
@@ -62,11 +62,11 @@ public class AccountService {
 			throw new IllegalArgumentException ("El texto debe tener entre 9 y 12 caracteres.");
 		}
 
-		if (!vt.isValidMail(req.getMail())) {
+		if (!vt.isValidMail(req.getCorreo())) {
 			throw new IllegalArgumentException ("El gmail no tiene la estructura correcta.");
 		}
 
-		if (!vt.hasValidLength(req.getContrasenia(), 10, 60)) {
+		if (!vt.hasValidLength(req.getContrasenia(), 1, 60)) {
 			throw new IllegalArgumentException ("El texto debe tener entre 10 y 60 caracteres.");
 		} else if (!vt.hasNoneCharacterDanger(req.getContrasenia())) {
 			throw new IllegalArgumentException ("Esta intento ingresar caracteres especiales que son aceptados");
@@ -77,9 +77,12 @@ public class AccountService {
 		user.setApellido(req.getApellido());
 		user.setNmrDocumento(req.getNmrDocumento());
 		user.setTelefono(req.getTelefono());
-		user.setMail(req.getMail());
+		user.setCorreo(req.getCorreo());
 		user.setContrasenia(passwordEncoder.encode(req.getContrasenia()));
-		user.setRol("user");
+		user.setRol(req.getRol());
+	    user.setEstado(true);
+	    user.setFechaEliminacion(null);
+	    user.setIdDto(1);
 
 		return userRepository.save(user);
 	}
@@ -87,7 +90,7 @@ public class AccountService {
 	public Usuario updateUser(UpdateUserDTO req) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    Usuario user = userRepository.findByMail(emailAutenticado)
+	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 	    
 		if (!vt.hasOnlyLettersAndSpaces(req.getNombre())) {
@@ -124,7 +127,7 @@ public class AccountService {
 	
 	public String createTokenFromAuth(LoginDTO request) {
 
-		Usuario usuario = userRepository.findByMail(request.getMail()).orElse(null);
+		Usuario usuario = userRepository.findByCorreo(request.getMail()).orElse(null);
 
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {
 			return jwtService.generateToken(request.getMail());
@@ -137,7 +140,7 @@ public class AccountService {
 	public String updateClave(UpdatePasswordDTO req) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    Usuario user = userRepository.findByMail(emailAutenticado)
+	    Usuario user = userRepository.findByCorreo(emailAutenticado)
 	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
 		if (!passwordEncoder.matches(req.getContraseniaActual(), user.getContrasenia())) {
@@ -162,7 +165,7 @@ public class AccountService {
 
 	    
 		if (authentication != null) {
-		    Usuario user = userRepository.findByMail(authentication.getName())
+		    Usuario user = userRepository.findByCorreo(authentication.getName())
 		            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 		    if(user != null) {
 		    	return user;
