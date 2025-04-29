@@ -15,7 +15,7 @@ import com.cibertec.runner.service.JwtService;
 import com.cibertec.runner.service.UserDetailsServiceImpl;
 
 @Configuration
-@EnableWebSecurity 
+@EnableWebSecurity // BUSCAR PARA QUE SIRVE
 public class SecurityConfig {
 
 	@Autowired
@@ -23,6 +23,7 @@ public class SecurityConfig {
 	@Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
@@ -30,7 +31,7 @@ public class SecurityConfig {
 				.and()
 				.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/account/register", "/account/signin").permitAll() // Permite acceso sin login a estas rutas
+						.requestMatchers("/account/register", "/account/sign-in").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 

@@ -12,6 +12,7 @@ import com.cibertec.runner.dto.request.LoginDTO;
 import com.cibertec.runner.dto.request.RegisterUserDTO;
 import com.cibertec.runner.dto.request.UpdatePasswordDTO;
 import com.cibertec.runner.dto.request.UpdateUserDTO;
+import com.cibertec.runner.dto.response.UserResponse;
 import com.cibertec.runner.model.Distrito;
 import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.repository.IUsuarioRepository;
@@ -36,7 +37,7 @@ public class AccountService {
 		if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
 			throw new IllegalArgumentException("El correo ya está registrado");
 		}
-		
+
 		vt.isRequired(request.getNombre(), "Nombre");
 		vt.hasOnlyLettersAndSpaces(request.getNombre(), "Nombre");
 		vt.hasValidLength(request.getNombre(), 2, 30, "Nombre");
@@ -63,20 +64,20 @@ public class AccountService {
 		user.setCorreo(request.getCorreo());
 		user.setContrasenia(passwordEncoder.encode(request.getContrasenia()));
 		user.setRol("USER");
-		
+
 		Distrito d = distritoSer.findById(request.getIdDto());
-		if(d != null) {
+		if (d != null) {
 			user.setIdDto(request.getIdDto());
-		}else {
+		} else {
 			throw new RuntimeException("No se encontro un distrito");
 		}
 	}
 
 	public void updateUser(UpdateUserDTO request) {
-	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+		String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-	    Usuario user = userRepository.findByCorreo(emailAutenticado)
-	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+		Usuario user = userRepository.findByCorreo(emailAutenticado)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
 		vt.isRequired(request.getNombre(), "Nombre");
 		vt.hasOnlyLettersAndSpaces(request.getNombre(), "Nombre");
@@ -94,16 +95,15 @@ public class AccountService {
 		vt.hasOnlyNumbers(request.getTelefono(), "Telefono");
 		vt.hasValidLength(request.getTelefono(), 9, 12, "Telefono");
 
-		
-	    user.setNombre(request.getNombre());
-	    user.setApellido(request.getApellido());
-	    user.setNmrDocumento(request.getNmrDocumento());
-	    user.setTelefono(request.getTelefono());
-	    
-	    userRepository.save(user);
+		user.setNombre(request.getNombre());
+		user.setApellido(request.getApellido());
+		user.setNmrDocumento(request.getNmrDocumento());
+		user.setTelefono(request.getTelefono());
+
+		userRepository.save(user);
 
 	}
-	
+
 	public String signin(LoginDTO request) {
 
 		Usuario usuario = userRepository.findByCorreo(request.getCorreo()).orElse(null);
@@ -111,49 +111,56 @@ public class AccountService {
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {
 			return jwtService.generateToken(request.getCorreo());
 		} else {
-		    throw new BadCredentialsException("Usuario y/o contraseña incorrecta");
+			throw new BadCredentialsException("Usuario y/o contraseña incorrecta");
 		}
 
 	}
 
-	public void updateClave(UpdatePasswordDTO request) {
-	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+	public void updatePassword(UpdatePasswordDTO request) {
+		String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		vt.isRequired(request.getContraseniaActual(), "La contraseña actual");
 		vt.hasNoneCharacterDanger(request.getContraseniaActual(), "La contraseña actual");
-		
-		vt.isRequired(request.getNuevaContrasenia(), "La nueva contraseña");
-		
-	    Usuario user = userRepository.findByCorreo(emailAutenticado)
-	            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-		
+		vt.isRequired(request.getNuevaContrasenia(), "La nueva contraseña");
+
+		Usuario user = userRepository.findByCorreo(emailAutenticado)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
 		if (!passwordEncoder.matches(request.getContraseniaActual(), user.getContrasenia())) {
 			throw new BadCredentialsException("La contraseña actual es incorrecta");
 		}
 
 		vt.hasValidLength(request.getNuevaContrasenia(), 5, 60, "Contraseña");
 		vt.hasNoneCharacterDanger(request.getNuevaContrasenia(), "Contraseña");
-		
 
 		String newPasswordEncrypted = passwordEncoder.encode(request.getNuevaContrasenia());
 		user.setContrasenia(newPasswordEncrypted);
 		userRepository.save(user);
 	}
 
-	public Usuario getUsuarioLogueado() {
+	public UserResponse getUsuarioLogueado() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication != null) {
-		    Usuario user = userRepository.findByCorreo(authentication.getName())
-		            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-		    if(user != null) {
-		    	return user;
-		    }
+			Usuario user = userRepository.findByCorreo(authentication.getName())
+					.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+			
+			UserResponse response = new UserResponse();
+
+			response.setNombre(user.getNombre());
+			response.setApellido(user.getApellido());
+			response.setNmrDocumento(user.getNmrDocumento());
+			response.setTelefono(user.getTelefono());
+			response.setCorreo(user.getCorreo());
+			response.setDistrito(user.getDistrito());
+
+			return response;
+
 		}
-        
-		throw new UsernameNotFoundException("Usuario no autenticado");
+
+		throw new UsernameNotFoundException("Usuario no autentificado");
 	}
 
 }
