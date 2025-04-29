@@ -31,7 +31,7 @@ public class AccountService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	public Usuario registerUser(RegisterUserDTO request) {
+	public void registerUser(RegisterUserDTO request) {
 
 		if (userRepository.findByCorreo(request.getCorreo()).isPresent()) {
 			throw new IllegalArgumentException("El correo ya está registrado");
@@ -70,11 +70,9 @@ public class AccountService {
 		}else {
 			throw new RuntimeException("No se encontro un distrito");
 		}
-
-		return userRepository.save(user);
 	}
 
-	public Usuario updateUser(UpdateUserDTO request) {
+	public void updateUser(UpdateUserDTO request) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
 	    Usuario user = userRepository.findByCorreo(emailAutenticado)
@@ -96,13 +94,14 @@ public class AccountService {
 		vt.hasOnlyNumbers(request.getTelefono(), "Telefono");
 		vt.hasValidLength(request.getTelefono(), 9, 12, "Telefono");
 
-
+		
 	    user.setNombre(request.getNombre());
 	    user.setApellido(request.getApellido());
 	    user.setNmrDocumento(request.getNmrDocumento());
 	    user.setTelefono(request.getTelefono());
+	    
+	    userRepository.save(user);
 
-	    return userRepository.save(user);
 	}
 	
 	public String signin(LoginDTO request) {
@@ -117,7 +116,7 @@ public class AccountService {
 
 	}
 
-	public String updateClave(UpdatePasswordDTO request) {
+	public void updateClave(UpdatePasswordDTO request) {
 	    String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		vt.isRequired(request.getContraseniaActual(), "La contraseña actual");
@@ -140,14 +139,12 @@ public class AccountService {
 		String newPasswordEncrypted = passwordEncoder.encode(request.getNuevaContrasenia());
 		user.setContrasenia(newPasswordEncrypted);
 		userRepository.save(user);
-		return "La contraseña se a actualizado correctamente";
 	}
 
 	public Usuario getUsuarioLogueado() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	    
 		if (authentication != null) {
 		    Usuario user = userRepository.findByCorreo(authentication.getName())
 		            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
@@ -156,7 +153,6 @@ public class AccountService {
 		    }
 		}
         
-
 		throw new UsernameNotFoundException("Usuario no autenticado");
 	}
 

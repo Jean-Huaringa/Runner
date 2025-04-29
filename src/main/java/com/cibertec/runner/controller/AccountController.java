@@ -1,12 +1,12 @@
 package com.cibertec.runner.controller;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,74 +18,75 @@ import com.cibertec.runner.dto.request.LoginDTO;
 import com.cibertec.runner.dto.request.RegisterUserDTO;
 import com.cibertec.runner.dto.request.UpdatePasswordDTO;
 import com.cibertec.runner.dto.request.UpdateUserDTO;
-import com.cibertec.runner.dto.response.JsonResponse;
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.service.AccountService;
 
 @RestController
 @RequestMapping("/account")
 public class AccountController {
-	
+
 	@Autowired
-    private AccountService userService;
+	private AccountService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterUserDTO request) {
-    	try {
-            userService.registerUser(request);
-            return ResponseEntity.ok(Map.of("mensaje", "El usuario se creo correctamente"));
-		}catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-	    }catch (RuntimeException e) {
-	        return JsonResponse.buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-		}catch (Exception e) {
-	        return JsonResponse.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
-	    }
-    }
+	@PostMapping("/register")
+	public ResponseEntity<SuccessResponse<String>> registerUser(@RequestBody RegisterUserDTO request) {
+		
+		userService.registerUser(request);
+		
+		SuccessResponse<String> success = new SuccessResponse<String>();
+		success.setTimestamp(LocalDateTime.now());
+		success.setStatus(HttpStatus.CREATED.value());
+		success.setSuccess(HttpStatus.CREATED.getReasonPhrase());
+		success.setResponse("Usuario se creo correctamente");
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(success);
+	}
 
-    @PutMapping("/update-user")
-    public ResponseEntity<Map<String, String>> updateUser(@RequestBody UpdateUserDTO request) {    
-        try {
-        	Usuario userDto = userService.updateUser(request);
-            return ResponseEntity.ok(Map.of("mensaje", "El usuario se actualizo correctamente"));
-		}catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException  e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-	    } catch (Exception e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
-	    }
-    }
-    
-    @PostMapping("/signin")
-    public ResponseEntity<Map<String, String>> signin(@RequestBody LoginDTO request) {    
-        try {
-			String response = userService.signin(request);
-            return ResponseEntity.ok(Map.of("token", response));
-		} catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-	    } catch (Exception e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
-	    }
-    }
-    
-    @PutMapping("/update-contrasenia")
-    public ResponseEntity<Map<String, String>> updateClave(@RequestBody UpdatePasswordDTO request) {    
-        try {
-        	String token = userService.updateClave(request);
-            return ResponseEntity.ok(Map.of("mensaje", token));
-		} catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-	    } catch (Exception e) {
-		    return JsonResponse.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
-	    }
-    }
-    
-    @GetMapping("/user")
-    public ResponseEntity<Usuario> getUsuarioLogueado() {    
-        try {
-        	Usuario token = userService.getUsuarioLogueado();
-            return ResponseEntity.ok(token);
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(new Usuario());
-		}
-    }
+	@PutMapping("/update-user")
+	public ResponseEntity<SuccessResponse<String>> updateUser(@RequestBody UpdateUserDTO request) {
+		userService.updateUser(request);
+		
+		SuccessResponse<String> success = new SuccessResponse<String>();
+		success.setTimestamp(LocalDateTime.now());
+		success.setStatus(HttpStatus.OK.value());
+		success.setSuccess(HttpStatus.OK.getReasonPhrase());
+		success.setResponse("");
+		
+		return ResponseEntity.ok(success);
+	}
+
+	@PostMapping("/signin")
+	public ResponseEntity<SuccessResponse<String>> signin(@RequestBody LoginDTO request) {
+		String mensaje = userService.signin(request);
+
+		SuccessResponse<String> success = new SuccessResponse<String>();
+		success.setTimestamp(LocalDateTime.now());
+		success.setStatus(HttpStatus.OK.value());
+		success.setSuccess(HttpStatus.OK.getReasonPhrase());
+		success.setResponse(mensaje);
+		return ResponseEntity.ok(success);
+	}
+
+	@PutMapping("/update-contrasenia")
+	public ResponseEntity<SuccessResponse<String>> updateClave(@RequestBody UpdatePasswordDTO request) {
+		userService.updateClave(request);
+		SuccessResponse<String> success = new SuccessResponse<String>();
+		success.setTimestamp(LocalDateTime.now());
+		success.setStatus(HttpStatus.OK.value());
+		success.setSuccess(HttpStatus.OK.getReasonPhrase());
+		success.setResponse("");
+		return ResponseEntity.ok(success);
+	}
+
+	@GetMapping("/user")
+	public ResponseEntity<SuccessResponse<Usuario>> getUsuarioLogueado() {
+		Usuario token = userService.getUsuarioLogueado();
+		SuccessResponse<Usuario> success = new SuccessResponse<Usuario>();
+		success.setTimestamp(LocalDateTime.now());
+		success.setStatus(HttpStatus.OK.value());
+		success.setSuccess(HttpStatus.OK.getReasonPhrase());
+		success.setResponse(token);
+		return ResponseEntity.ok(success);
+	}
 }
