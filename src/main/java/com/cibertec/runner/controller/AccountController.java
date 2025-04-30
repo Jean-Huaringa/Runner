@@ -1,73 +1,100 @@
 package com.cibertec.runner.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cibertec.runner.dto.LoginDTO;
-import com.cibertec.runner.dto.RegisterUserDTO;
-import com.cibertec.runner.dto.UpdatePasswordDTO;
-import com.cibertec.runner.dto.UpdateUserDTO;
-import com.cibertec.runner.model.Usuario;
+import com.cibertec.runner.dto.request.LoginDTO;
+import com.cibertec.runner.dto.request.RegisterUserDTO;
+import com.cibertec.runner.dto.request.UpdatePasswordDTO;
+import com.cibertec.runner.dto.request.UpdateUserDTO;
+import com.cibertec.runner.dto.response.SuccessResponse;
+import com.cibertec.runner.dto.response.UserResponse;
 import com.cibertec.runner.service.AccountService;
 
 @RestController
-@RequestMapping("/acount")
+@RequestMapping("/api/acount")
 public class AccountController {
-	
+
 	@Autowired
-    private AccountService userService;
+	private AccountService userService;
+ 
+	@PostMapping("/register") // registrar usuario
+	public ResponseEntity<SuccessResponse<String>> registerUser(@RequestBody RegisterUserDTO request) {
+		
+		userService.registerUser(request);
+		
+		SuccessResponse<String> success = SuccessResponse.<String>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.CREATED.value())
+			        .success(HttpStatus.CREATED.getReasonPhrase())
+			        .response("El usuario se creo correctamente")
+			        .build();
+		 
+		return ResponseEntity.status(HttpStatus.CREATED).body(success);
+	}
 
-    @PostMapping("/registro")
-    public ResponseEntity<String> createUser(@RequestBody RegisterUserDTO usuario) {
-    	try {
-            userService.createUser(usuario);
-            return ResponseEntity.ok("El usuario se creo correctamente");
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-		}
-    }
+	@PutMapping("/update-user") // actualizar datos de usuario 
+	public ResponseEntity<SuccessResponse<String>> updateUser(@RequestBody UpdateUserDTO request) {
+		userService.updateUser(request);
+		
+		 SuccessResponse<String> success = SuccessResponse.<String>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.OK.value())
+			        .success(HttpStatus.OK.getReasonPhrase())
+			        .response("El usuario fue actualizado")
+			        .build();
+		
+		return ResponseEntity.ok(success);
+	}
 
-    @PostMapping("/update-user")
-    public ResponseEntity<Usuario> updateUser(@RequestBody UpdateUserDTO req) {    
-        try {
-        	Usuario userDto = userService.updateUser(req);
-            return ResponseEntity.ok(userDto);
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(new Usuario());
-		}
-    }
-    
-    @PostMapping("/create-token")
-    public ResponseEntity<String> createTokenFromAuth(@RequestBody LoginDTO request) {    
-        try {
-        	String token = userService.createTokenFromAuth(request);
-            return ResponseEntity.ok(token);
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-		}
-    }
-    
-    @PostMapping("/update-contrasenia")
-    public ResponseEntity<String> updateClave(@RequestBody UpdatePasswordDTO request) {    
-        try {
-        	String token = userService.updateClave(request);
-            return ResponseEntity.ok(token);
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-		}
-    }
-    
-    @PostMapping("/user")
-    public ResponseEntity<Usuario> getUsuarioLogueado() {    
-        try {
-        	Usuario token = userService.getUsuarioLogueado();
-            return ResponseEntity.ok(token);
-		} catch (Exception e) {
-            return ResponseEntity.status(401).body(new Usuario());
-		}
-    }
+	@PostMapping("/sign-in") // iniciar sesión
+	public ResponseEntity<SuccessResponse<String>> signin(@RequestBody LoginDTO request) {
+		String mensaje = userService.signin(request);
+		
+		SuccessResponse<String> success = SuccessResponse.<String>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.OK.value())
+			        .success(HttpStatus.OK.getReasonPhrase())
+			        .response(mensaje)
+			        .build();
+		 
+		return ResponseEntity.ok(success);
+	}
+
+	@PutMapping("/update-password") // actualizar contraseña
+	public ResponseEntity<SuccessResponse<String>> updatePassword(@RequestBody UpdatePasswordDTO request) {
+		userService.updatePassword(request);
+		
+		SuccessResponse<String> success = SuccessResponse.<String>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.OK.value())
+			        .success(HttpStatus.OK.getReasonPhrase())
+			        .response("La contraseña se cambio correctamente")
+			        .build();
+		
+		return ResponseEntity.ok(success);
+	}
+
+	@GetMapping("/user-data") // datos del usuario
+	public ResponseEntity<SuccessResponse<UserResponse>> getUsuarioLogueado() {
+		UserResponse response = userService.getUsuarioLogueado();
+		
+		SuccessResponse<UserResponse> success = SuccessResponse.<UserResponse>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.OK.value())
+			        .success(HttpStatus.OK.getReasonPhrase())
+			        .response(response)
+			        .build();
+		
+		return ResponseEntity.ok(success);
+	}
 }

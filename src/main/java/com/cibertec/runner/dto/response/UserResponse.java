@@ -1,14 +1,15 @@
-package com.cibertec.runner.dto;
+package com.cibertec.runner.dto.response;
+
+import com.cibertec.runner.model.Distrito;
 
 import lombok.Data;
 
 @Data
-public class RegisterUserDTO {
+public class UserResponse {
 	private String nombre;
 	private String apellido;
 	private String nmrDocumento;
 	private String telefono;
-	private String contrasenia;
 	private String correo;
-	private String rol;
+	private Distrito distrito;
 }

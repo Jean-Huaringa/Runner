@@ -7,4 +7,6 @@ import com.cibertec.runner.model.Talla;
 
 @Repository
 public interface ITallaRepository extends JpaRepository<Talla, Integer>{
+	
+	boolean existsByNombre(String nombre);
 }

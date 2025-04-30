@@ -34,7 +34,8 @@ public class Trabajador {
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
     
-    @Column(name = "fecha_salida")
+
+    @Column(name = "fecha_salida", nullable = true, updatable = true)
     private LocalDateTime fechaSalida;
     
     @OneToOne

@@ -14,9 +14,8 @@ import com.cibertec.runner.security.JwtAuthenticationFilter;
 import com.cibertec.runner.service.JwtService;
 import com.cibertec.runner.service.UserDetailsServiceImpl;
 
-@Configuration // indica que esta clase contiene definiciones de beans.
-//  Spring escanea esta clase, y al ver que está marcada con @Configuration, ejecuta el método empleado() y registra el resultado como un bean.
-@EnableWebSecurity // habilita la configuración de seguridad web personalizada con Spring Security.
+@Configuration
+@EnableWebSecurity // BUSCAR PARA QUE SIRVE
 public class SecurityConfig {
 
 	@Autowired
@@ -24,12 +23,17 @@ public class SecurityConfig {
 	@Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-	// este metodo se ejecutara por si solo cada que envie una solicitud http
+	@SuppressWarnings("removal")
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", "/acount/create-token").permitAll() // Permite acceso sin login a estas rutas
-						.requestMatchers("/trabajador/**").permitAll() ///TRABAJADOR
+
+
+		return http
+				.cors()
+				.and()
+				.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/account/register", "/account/sign-in").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 

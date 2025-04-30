@@ -25,8 +25,8 @@ public class Modelo {
 	@Column(name = "informacion", nullable = false, length = 255)
 	private String info;
 	
-	@Column(name = "estado")
-	private Double estado;
+	@Column(name = "estado", nullable = false)
+	private Boolean estado;
 	
 	@Column(name = "precio")
 	private Double precio;
@@ -58,5 +58,6 @@ public class Modelo {
 	@ManyToOne
 	@JoinColumn(name = "id_mtl", referencedColumnName = "id_mtl", insertable = false, updatable = false)
     private Material material;
+
 
 }
