@@ -34,6 +34,8 @@ public class Ticket {
 	@Column(name = "id_usr", nullable = false)
 	private Integer idUsr;
 	
+	
+	
 	@ManyToOne
 	@JoinColumn(name = "id_usr", referencedColumnName = "id_usr", insertable = false, updatable = false)
     private Usuario usuario;
