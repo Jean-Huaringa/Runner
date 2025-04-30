@@ -11,3 +11,5 @@ import com.cibertec.runner.model.TransaccionId;
 @Repository
 public interface ITransacionRepository extends JpaRepository<Transaccion, TransaccionId>{
 
+}
+

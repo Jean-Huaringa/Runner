@@ -8,3 +8,4 @@ import com.cibertec.runner.model.Ticket;
 
 @Repository
 public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
+}
