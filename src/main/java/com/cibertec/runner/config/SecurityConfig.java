@@ -27,6 +27,7 @@ public class SecurityConfig {
 	// este metodo se ejecutara por si solo cada que envie una solicitud http
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
 		return http.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-t
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", 
 																	"/acount/create-token", 

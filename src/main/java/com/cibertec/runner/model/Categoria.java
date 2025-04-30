@@ -19,3 +19,5 @@ public class Categoria {
 	@Column (name = "nombre", nullable = false, length = 100, unique = true)
 	private String nombre;
 }
+
+
