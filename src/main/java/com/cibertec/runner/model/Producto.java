@@ -13,9 +13,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "tb_producto", uniqueConstraints = { @UniqueConstraint (columnNames = { "id_prd", "id_tll", "id_clr" }) })
-public class Producto { 
- 
+
+@Table(name = "tb_producto", uniqueConstraints = { @UniqueConstraint (columnNames = { "id_mdl", "id_tll", "id_clr" }) })
+public class Producto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_prd", nullable = false)

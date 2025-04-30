@@ -1,15 +1,11 @@
-package com.cibertec.runner.dto;
+package com.cibertec.runner.dto.request;
 
 import lombok.Data;
 
 @Data
-public class RegisterUserDTO {
+public class UpdateUserDTO {
 	private String nombre;
 	private String apellido;
 	private String nmrDocumento;
 	private String telefono;
-	private String mail;
-	private String contrasenia;
 }
-
-

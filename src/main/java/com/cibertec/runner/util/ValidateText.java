@@ -5,32 +5,40 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidateText {
 
-	// Validar que no esté vacío
-	public boolean isRequired(String texto) {
-		return texto != null && !texto.trim().isEmpty();
+	public void isRequired(String texto, String fieldName) {
+		if (texto == null || texto.trim().isEmpty()) {
+			throw new IllegalArgumentException(fieldName + " es obligatorio.");
+		}
 	}
 
-	// Validar longitud mínima y máxima
-	public boolean hasValidLength(String texto, int min, int max) {
+	public void hasValidLength(String texto, int min, int max, String fieldName) {
 		int longitud = texto.trim().length();
-		return longitud >= min && longitud <= max;
+		if (longitud < min || longitud > max) {
+			throw new IllegalArgumentException(fieldName + " debe tener entre " + min + " y " + max + " caracteres.");
+		}
 	}
 
-	// Validar que solo tenga letras y espacios
-	public boolean hasOnlyLettersAndSpaces(String texto) {
-		return texto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$");
+	public void hasOnlyLettersAndSpaces(String texto, String fieldName) {
+		if (!texto.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$") || texto == null) {
+			throw new IllegalArgumentException(fieldName + " solo puede contener letras y espacios.");
+		}
 	}
 
-	// Validar que no contenga caracteres especiales peligrosos
-	public boolean hasNoneCharacterDanger(String texto) {
-		return !texto.matches(".*[<>\"'%;].*");
+	public void hasOnlyNumbers(String texto, String fieldName) {
+		if (!texto.matches("^\\d+$")) {
+			throw new IllegalArgumentException(fieldName + " solo puede contener números.");
+		}
 	}
 
-	public boolean isValidMail(String email) {
-		return email.matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$");
+	public void hasNoneCharacterDanger(String texto, String fieldName) {
+		if (texto.matches(".*[<>\"'%;].*")) {
+			throw new IllegalArgumentException(fieldName + " contiene caracteres no permitidos.");
+		}
 	}
-	
-	public boolean hasOnlyNumbers(String texto) {
-	    return texto.matches("^\\d+$");
+
+	public void isValidGmail(String email) {
+		if (!email.matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$")) {
+			throw new IllegalArgumentException("El correo no tiene un formato válido de Gmail.");
+		}
 	}
 }
