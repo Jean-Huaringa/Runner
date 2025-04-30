@@ -5,4 +5,6 @@ import lombok.Data;
 public class UpdatePasswordDTO {
     private String contraseniaActual;
     private String nuevaContrasenia;
+    
+    
 }

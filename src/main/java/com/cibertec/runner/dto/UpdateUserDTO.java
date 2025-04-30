@@ -8,4 +8,6 @@ public class UpdateUserDTO {
 	private String apellido;
 	private String nmrDocumento;
 	private String telefono;
+	
+	
 }

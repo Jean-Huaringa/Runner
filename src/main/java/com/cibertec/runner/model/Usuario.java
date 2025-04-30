@@ -60,4 +60,6 @@ public class Usuario {
     @ManyToOne
 	@JoinColumn(name = "id_dto", referencedColumnName = "id_dto", insertable = false, updatable = false)
     private Distrito distrito;
+    
+    
 }
