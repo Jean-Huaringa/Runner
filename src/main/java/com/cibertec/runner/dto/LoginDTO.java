@@ -6,4 +6,8 @@ import lombok.Data;
 public class LoginDTO {
     private String mail;
     private String contrasenia;
+    
+ 
+    
+    
 }
