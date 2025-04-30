@@ -28,7 +28,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", "/acount/create-token").permitAll() // Permite acceso sin login a estas rutas
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", "/acount/create-token", "/api/transaccion/**").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 
