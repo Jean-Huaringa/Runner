@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ModeloDTO {
-	
 	private Integer id;
 	private String descripcion;
 	private String info;

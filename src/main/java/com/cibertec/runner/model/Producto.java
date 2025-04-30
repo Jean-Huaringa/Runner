@@ -45,14 +45,4 @@ public class Producto {
 	@JoinColumn(name = "id_clr", referencedColumnName = "id_clr", insertable = false, updatable = false)
 	private Color color;
 
-	public Object getEstado() {
-		
-		return null;
-	}
-
-	public void setEstado(String string) {
-		
-		
-	}
-
 }

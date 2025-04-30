@@ -10,6 +10,6 @@ import com.cibertec.runner.model.Modelo;
 @Repository
 public interface IModeloRepository extends JpaRepository<Modelo, Long>{
 	
-	List<Modelo> findAllByEstado(Double estado);
+	List<Modelo> findAllByEstado(Boolean estado);
 	
 }

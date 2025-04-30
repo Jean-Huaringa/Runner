@@ -19,6 +19,7 @@ import lombok.Data;
 public class Trabajador {
 	
 	@Id
+	@Column(name = "id_tbj", nullable = false)
 	private Integer id;
 	
 	@Column(name = "salario", nullable = false)

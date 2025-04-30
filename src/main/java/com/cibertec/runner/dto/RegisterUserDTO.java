@@ -10,8 +10,6 @@ public class RegisterUserDTO {
 	private String telefono;
 	private String mail;
 	private String contrasenia;
-
-	
 }
 
 
