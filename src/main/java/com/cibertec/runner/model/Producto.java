@@ -14,8 +14,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "tb_producto", uniqueConstraints = { @UniqueConstraint (columnNames = { "id_prd", "id_tll", "id_clr" }) })
-public class Producto {
-
+public class Producto { 
+ 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_prd", nullable = false)
@@ -44,5 +44,15 @@ public class Producto {
 	@ManyToOne
 	@JoinColumn(name = "id_clr", referencedColumnName = "id_clr", insertable = false, updatable = false)
 	private Color color;
+
+	public Object getEstado() {
+		
+		return null;
+	}
+
+	public void setEstado(String string) {
+		
+		
+	}
 
 }

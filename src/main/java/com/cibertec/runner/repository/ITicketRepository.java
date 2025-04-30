@@ -7,5 +7,5 @@ import com.cibertec.runner.model.Ticket;
 import com.cibertec.runner.model.TransaccionId;
 
 @Repository
-public interface ITicketRepository extends JpaRepository<Ticket, TransaccionId> {
+public interface ITicketRepository extends JpaRepository<Ticket, Integer> {
 }
