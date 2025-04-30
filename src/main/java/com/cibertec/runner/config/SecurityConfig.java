@@ -27,9 +27,30 @@ public class SecurityConfig {
 	// este metodo se ejecutara por si solo cada que envie una solicitud http
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", "/acount/create-token").permitAll() // Permite acceso sin login a estas rutas
-						.requestMatchers("/api/modelo/**").permitAll() ///MODELO
+
+		return http.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-t
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/acount/registro", 
+																	"/acount/create-token", 
+																	"api/categoria/listado", 
+																	"api/categoria/buscar/{id}", 
+																	"api/categoria/crear", 
+																	"api/categoria/actualizar/{id}", 
+																	"api/categoria/eliminar/{id}", 
+																	"api/marca/listado", 
+																	"api/marca/buscar/{id}", 
+																	"api/marca/crear", 
+																	"api/marca/actualizar/{id}", 
+																	"api/marca/eliminar/{id}", 
+																	"api/persona/listado", 
+																	"api/persona/buscar/{id}", 
+																	"api/persona/crear", 
+																	"api/persona/actualizar/{id}", 
+																	"api/persona/eliminar/{id}", 
+																	"api/material/listado", 
+																	"api/material/buscar/{id}", 
+																	"api/material/crear", 
+																	"api/material/actualizar/{id}", 
+																	"api/material/eliminar/{id}").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 

@@ -1,6 +1,6 @@
 package com.cibertec.runner.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -49,10 +49,10 @@ public class Usuario {
     
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     @CreationTimestamp
-    private Date fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fecha_eliminacion")
-    private Date fechaEliminacion;
+    private LocalDateTime fechaEliminacion;
 
 	@Column(name = "id_dto", nullable = false)
 	private Integer idDto;
