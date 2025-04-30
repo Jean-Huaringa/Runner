@@ -105,7 +105,8 @@ public class AccountService {
 	}
 
 	public String signin(LoginDTO request) {
-
+		vt.hasNoneCharacterDanger(request.getCorreo(), "Correo");
+		vt.hasNoneCharacterDanger(request.getContrasenia(), "Contraseña");
 		Usuario usuario = userRepository.findByCorreo(request.getCorreo()).orElse(null);
 
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {

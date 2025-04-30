@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 		error.setTimestamp(LocalDateTime.now());
 		error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		error.setError(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-		error.setMessage(ex.getMessage());
+		error.setMessage("Error interno");
 		error.setPath(request.getDescription(false).replace("uri=", ""));
 
 		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
