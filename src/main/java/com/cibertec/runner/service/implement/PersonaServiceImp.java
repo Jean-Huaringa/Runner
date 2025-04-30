@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImp;
+package com.cibertec.runner.service.implement;
 
 import java.util.List;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class PersonaServiceImp implements PersonaService{
 	private IPersonaRepository dao;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listPersonas() {
+	public ResponseEntity<Map<String, Object>> findAllPersonas() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		// CAPTURA DE LISTADO DE PERSONAS
 		List<Persona> personas =  dao.findAll();
@@ -47,7 +47,7 @@ public class PersonaServiceImp implements PersonaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listPersonaById(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdPersona(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		// CAPTURA PERSONA BUSCADA POR ID
 		Optional<Persona> persona =  dao.findById(id);
@@ -72,7 +72,7 @@ public class PersonaServiceImp implements PersonaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> createPersona(Persona p) {
+	public ResponseEntity<Map<String, Object>> savePersona(Persona p) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		try {
@@ -139,7 +139,7 @@ public class PersonaServiceImp implements PersonaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deletePersona(Integer id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdPersona(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		// CAPTURA PERSONA BUSCADA POR ID
 		Optional<Persona> buscaPersona =  dao.findById(id);

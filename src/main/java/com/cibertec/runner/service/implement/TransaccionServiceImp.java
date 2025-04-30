@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,29 +13,29 @@ import org.springframework.stereotype.Service;
 import com.cibertec.runner.model.Transaccion;
 import com.cibertec.runner.model.TransaccionId;
 import com.cibertec.runner.repository.ITransacionRepository;
-import com.cibertec.runner.service.ITransaccionService;
+import com.cibertec.runner.service.TransaccionService;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class TransaccionServiceImpl implements ITransaccionService {
+public class TransaccionServiceImp implements TransaccionService {
 
     @Autowired
     private ITransacionRepository iTransaccionRepository;
 
    	@Override
-	public List<Transaccion> listarTodas() {
+	public List<Transaccion> findAllListTransaccion() {
 		return iTransaccionRepository.findAll();
 	}
 
 	@Override
 	@Transactional
-	public Transaccion registrar(Transaccion transaccion) {
+	public Transaccion saveTransaccion(Transaccion transaccion) {
 		  return iTransaccionRepository.save(transaccion);
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> eliminarTransaccion(TransaccionId id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdTransaccion(TransaccionId id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		 

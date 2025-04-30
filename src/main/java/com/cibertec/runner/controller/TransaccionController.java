@@ -14,31 +14,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cibertec.runner.model.Transaccion;
 import com.cibertec.runner.model.TransaccionId;
-import com.cibertec.runner.service.ITransaccionService;
+import com.cibertec.runner.service.TransaccionService;
 
 @RestController
 @RequestMapping("/api/transaccion")
 public class TransaccionController {
 	
 	@Autowired
-    private ITransaccionService transaccionService;
+    private TransaccionService transaccionService;
 
     // Listar todas
     @GetMapping
-    public ResponseEntity<List<Transaccion>> listarTransacciones() {
-    	System.out.println("Entrando Listar");
-        return ResponseEntity.ok(transaccionService.listarTodas());
+    public ResponseEntity<List<Transaccion>> findAllListTransaccion() {
+        return ResponseEntity.ok(transaccionService.findAllListTransaccion());
     }
 
     // Registrar
     @PostMapping
-    public ResponseEntity<Transaccion> registrar(@RequestBody Transaccion transaccion) {
-        return ResponseEntity.ok(transaccionService.registrar(transaccion));
+    public ResponseEntity<Transaccion> saveTransaccion(@RequestBody Transaccion transaccion) {
+        return ResponseEntity.ok(transaccionService.saveTransaccion(transaccion));
     }
     
     @DeleteMapping("/deleteTr")
-    public ResponseEntity<Map<String, Object>> eliminar(@RequestBody TransaccionId id) {
+    public ResponseEntity<Map<String, Object>> deleteByIdTransaccion(@RequestBody TransaccionId id) {
     	System.out.println("Entrando DeleteMapping");
-        return transaccionService.eliminarTransaccion(id);
+        return transaccionService.deleteByIdTransaccion(id);
     }
 }

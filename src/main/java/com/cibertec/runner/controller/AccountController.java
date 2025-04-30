@@ -15,7 +15,7 @@ import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.service.AccountService;
 
 @RestController
-@RequestMapping("/acount")
+@RequestMapping("/api/acount")
 public class AccountController {
 	
 	@Autowired

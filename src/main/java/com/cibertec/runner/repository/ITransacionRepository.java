@@ -1,5 +1,3 @@
-
-
 package com.cibertec.runner.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;

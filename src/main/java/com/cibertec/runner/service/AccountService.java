@@ -16,11 +16,6 @@ import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.repository.IUsuarioRepository;
 import com.cibertec.runner.util.ValidateText;
 
-// log in
-// sign up
-// access
-// account
-
 @Service
 public class AccountService {
 

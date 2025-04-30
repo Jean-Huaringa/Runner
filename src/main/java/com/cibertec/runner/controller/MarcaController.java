@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cibertec.runner.model.Marca;
-import com.cibertec.runner.serviceImp.MarcaServiceImp;
+import com.cibertec.runner.service.implement.MarcaServiceImp;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,28 +26,28 @@ public class MarcaController {
 	private MarcaServiceImp ms;
 	
 	@GetMapping("/listado")
-	public ResponseEntity<Map<String, Object>> list() {
-		return ms.listMarcas();
+	public ResponseEntity<Map<String, Object>> findAllListMarcas() {
+		return ms.findAllListMarcas();
 	}
 	
 	@GetMapping("/buscar/{id}")
-	public ResponseEntity<Map<String, Object>> listById(@PathVariable Integer id) {
-		return ms.listMarcaById(id);
+	public ResponseEntity<Map<String, Object>> findByIdMarca(@PathVariable Integer id) {
+		return ms.findByIdMarca(id);
 	}
 	
 	@PostMapping("/crear")
-	public ResponseEntity<Map<String, Object>> create(@RequestBody Marca m) {
-		return ms.createMarca(m);
+	public ResponseEntity<Map<String, Object>> saveMarca(@RequestBody Marca m) {
+		return ms.saveMarca(m);
 	}
 	
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<Map<String, Object>> update(@RequestBody Marca m, @PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> updateMarca(@RequestBody Marca m, @PathVariable Integer id) {
 		return ms.updateMarca(m, id);
 	}
 	
 	@DeleteMapping("/eliminar/{id}")
-	public ResponseEntity<Map<String, Object>> delete(@PathVariable Integer id) {
-		return ms.deleteMarca(id);
+	public ResponseEntity<Map<String, Object>> deleteByIdMarca(@PathVariable Integer id) {
+		return ms.deleteByIdMarca(id);
 	}
 	
 }

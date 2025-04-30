@@ -1,4 +1,4 @@
-package com.cibertec.runner.model;
+package com.cibertec.runner.dto;
 
 import lombok.Data;
 

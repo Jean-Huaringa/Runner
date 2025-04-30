@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +20,7 @@ import com.cibertec.runner.service.TallaService;
 
 
 @Service
-public class TallaServiceImpl implements TallaService{
+public class TallaServiceImp implements TallaService{
 	
 	@Autowired
 	private ITallaRepository talRepo;
@@ -28,7 +28,7 @@ public class TallaServiceImpl implements TallaService{
 	
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> listarTodos() {
+	public ResponseEntity<Map<String, Object>> findAllTalla() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		 
 		
@@ -51,7 +51,7 @@ public class TallaServiceImpl implements TallaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> obtenerporId(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdTalla(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		Optional<Talla> talla = talRepo.findById(id);
 
@@ -70,7 +70,7 @@ public class TallaServiceImpl implements TallaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> Agregar(Talla talla) {
+	public ResponseEntity<Map<String, Object>> saveTalla(Talla talla) {
 	    Map<String, Object> respuesta = new LinkedHashMap<>();
 
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");

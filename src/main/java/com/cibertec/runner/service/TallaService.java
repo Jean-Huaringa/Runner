@@ -8,13 +8,10 @@ import com.cibertec.runner.model.Talla;
 
 public interface TallaService {
 	
+	public ResponseEntity<Map<String, Object>> findAllTalla();
 	
+	public ResponseEntity<Map<String, Object>> findByIdTalla(Integer id);
 	
-	public ResponseEntity<Map<String, Object>> listarTodos();
-	
-	public ResponseEntity<Map<String, Object>> obtenerporId(Integer id);
-	
-	
-	public ResponseEntity<Map<String, Object>> Agregar(Talla talla);
+	public ResponseEntity<Map<String, Object>> saveTalla(Talla talla);
 
 }

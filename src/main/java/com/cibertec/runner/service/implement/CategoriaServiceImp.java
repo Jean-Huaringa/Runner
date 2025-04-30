@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImp;
+package com.cibertec.runner.service.implement;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -11,29 +11,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.model.Material;
-import com.cibertec.runner.repository.IMaterialRepository;
-import com.cibertec.runner.service.MaterialService;
+import com.cibertec.runner.model.Categoria;
+import com.cibertec.runner.repository.ICategoriaRepository;
+import com.cibertec.runner.service.CategoriaService;
 
 @Service
-public class MaterialServiceImp implements MaterialService{
-
+public class CategoriaServiceImp implements CategoriaService{
+	
 	@Autowired
-	private IMaterialRepository dao;
+	private ICategoriaRepository dao;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listMateriales() {
+	public ResponseEntity<Map<String, Object>> findAllListCategoria() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LISTADO DE MATERIALES
-		List<Material> materiales = dao.findAll();
+		// CAPTURA LISTADO DE CATEGORIAS
+		List<Categoria> categorias = dao.findAll();
 		
 		// VERIFICAR SI LA LISTA ESTA VACIA
-		if(!materiales.isEmpty()) {
+		if(!categorias.isEmpty()) {
 			// MENSAJE CON ENVIO DE LISTADO
-			respuesta.put("mensaje", "Listado de materiales");
+			respuesta.put("mensaje", "Listado de categorias");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("materiales", materiales);
+			respuesta.put("categorias", categorias);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
@@ -45,24 +45,24 @@ public class MaterialServiceImp implements MaterialService{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 	}
-	
+
 	@Override
-	public ResponseEntity<Map<String, Object>> listMaterialById(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdCategoria(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA MATERIAL BUSCADO POR ID
-		Optional<Material> material = dao.findById(id);
+		// CAPTURA CATEGORIA BUSCADA POR ID
+		Optional<Categoria> categoria = dao.findById(id);
 		
-		// VERIFICA SI EL MATERIAL EXISTE
-		if(material.isPresent()) {
-			// MENSAJE CON EL MATERIAL ENCONTRADO
-			respuesta.put("mensaje", "Material encontrado");
+		// VERIFICA SI LA CATEGORIA EXISTE
+		if(categoria.isPresent()) {
+			// MENSAJE CON LA CATEGORIA ENCONTRADA
+			respuesta.put("mensaje", "Categoria encontrada");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("material", material.get());
+			respuesta.put("categoria", categoria.get());
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
-			// MENSAJE SI NO ENCUENTRA MATERIAL
+			// MENSAJE SI NO ENCUENTRA CATEGORIA
 			respuesta.put("mensaje", "No se encuentran registros con el ID: " + id);
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
@@ -72,23 +72,23 @@ public class MaterialServiceImp implements MaterialService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> createMaterial(Material m) {
+	public ResponseEntity<Map<String, Object>> saveCategoria(Categoria c) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		try {
 			// REALIZA REGISTRO
-			dao.save(m);
+			dao.save(c);
 			
 			// MENSAJE DE EXITO EN LA CREACION
-			respuesta.put("mensaje", "Material creado");
+			respuesta.put("mensaje", "Categoria creada");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("material", m);
+			respuesta.put("categoria", c);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 		} catch (Exception e) {
-			// MENSAJE EN CASO DE ERROR EN LA CREACION
-			respuesta.put("mensaje", "Error al crear material");
+			// MENSAJE  EN CASO DE ERROR EN LA CREACION
+			respuesta.put("mensaje", "Error al crear categoria");
 			respuesta.put("error", e.getMessage());
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -98,39 +98,39 @@ public class MaterialServiceImp implements MaterialService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> updateMaterial(Material m, Integer id) {
+	public ResponseEntity<Map<String, Object>> updateCategoria(Categoria c, Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA MATERIAL BUSCADO POR ID
-		Optional<Material> buscaMaterial = dao.findById(id);
+		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
+		Optional<Categoria> buscaCategoria = dao.findById(id);
 		
-		// VERIFICA SI EL MATERIAL YA EXISTE EN LA BD
-		if(!buscaMaterial.isPresent()) {
-			// MENSAJE SI NO ENCUENTRA MATERIAL
-			respuesta.put("mensaje", "El material con el ID especifico no existe");
+		// VERIFICA SI LA CATEGORIA YA EXISTE EN LA BD
+		if(!buscaCategoria.isPresent()) {
+			// MENSAJE EN CASO LA CATEGORIA NO EXISTE
+			respuesta.put("mensaje", "La categoria con el ID especificado no existe");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
-
+			
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 		
 		try {
-			// ACTUALIZA VALORES DE EL MATERIAL A ACTUALIZAR
-			Material materialActual = buscaMaterial.get();
-			materialActual.setNombre(m.getNombre());
+			// ACTUALIZA VALORES DE LA CATEGORIA A ACTUALIZAR
+			Categoria categoriaActual = buscaCategoria.get();
+			categoriaActual.setNombre(c.getNombre());
 			
-			// CAPTURA MATERIAL ACTUALIZADO
-			Material materialActualizado = dao.save(materialActual);
+			// CAPTURA CATEGORIA ACTUALIZADA
+			Categoria categoriaActualizada = dao.save(categoriaActual);
 			
 			// MENSAJE DE EXITO EN LA ACTUALIZACION
-			respuesta.put("mensaje", "Material actualizado con exito");
+			respuesta.put("mensaje", "Categoria actualizada con exito");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("material", materialActualizado);
+			respuesta.put("categoria", categoriaActualizada);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			// MENSAJE EN CASO DE ERROR
-			respuesta.put("mensaje", "Error al actualizar material");
+			respuesta.put("mensaje", "Error al actualizar categoria");
 			respuesta.put("error", e.getMessage());
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -140,20 +140,21 @@ public class MaterialServiceImp implements MaterialService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deleteMaterial(Integer id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdCategoria(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA MATERIAL BUSCADO POR ID
-		Optional<Material> buscaMaterial = dao.findById(id);
+		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
+		Optional<Categoria> buscaCategoria = dao.findById(id);
 		
-		// VERIFICA SI EL MATERIAL YA EXISTE
-		if(buscaMaterial.isPresent()) {
-			dao.delete(buscaMaterial.get());
+		// VERIFICA SI LA CATEGORIA EXISTE
+		if(buscaCategoria.isPresent()) {
+			// ELIMINA LA CATEGORIA
+			dao.delete(buscaCategoria.get());
 			
 			// RESPUESTA EN CASO DE EXITO EN LA ELIMINACION
-			respuesta.put("mensaje", "Material eliminado con exito");
+			respuesta.put("mensaje", "Categoria eliminada con exito");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-
+			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
 			// MENSAJE EN CASO DE ERROR EN LA ELIMINACION
@@ -164,5 +165,5 @@ public class MaterialServiceImp implements MaterialService{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 	}
-	
+
 }

@@ -4,17 +4,17 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
-import com.cibertec.runner.model.ModeloDTO;
+import com.cibertec.runner.dto.ModeloDTO;
 
 public interface ModeloService {
 	
-	public ResponseEntity<Map<String, Object>> listModelos();
+	public ResponseEntity<Map<String, Object>> findAllModelos();
 	
-	public ResponseEntity<Map<String, Object>> agregaModelo(ModeloDTO modeloDTO);
+	public ResponseEntity<Map<String, Object>> saveModelo(ModeloDTO modeloDTO);
 	
-	public ResponseEntity<Map<String, Object>> actualizaModelo(ModeloDTO modeloDTO, Long id);
+	public ResponseEntity<Map<String, Object>> updateModelo(ModeloDTO modeloDTO, Long id);
 	
-	public ResponseEntity<Map<String, Object>> eliminarLogicoModelo(Long id);
+	public ResponseEntity<Map<String, Object>> deleteByIdModelo(Long id);
 	
 
 }

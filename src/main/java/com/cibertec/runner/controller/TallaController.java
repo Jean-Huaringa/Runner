@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cibertec.runner.model.Color;
 import com.cibertec.runner.model.Talla;
-import com.cibertec.runner.serviceImpl.ColorServiceImpl;
-import com.cibertec.runner.serviceImpl.TallaServiceImpl;
+import com.cibertec.runner.service.implement.TallaServiceImp;
 
 @RestController
 @RequestMapping("/api/talla")
@@ -23,23 +21,23 @@ public class TallaController {
 	
 	
 	@Autowired
-	private TallaServiceImpl talRepo;
+	private TallaServiceImp talRepo;
 	
 	@GetMapping("/listado")
-	public ResponseEntity<Map<String, Object>> listTickets(){
-		return talRepo.listarTodos();
+	public ResponseEntity<Map<String, Object>> findAllTalla(){
+		return talRepo.findAllTalla();
 	}
 	
 	// busqueda por su primary key del objeto, en este caso el objeto es la talla 
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> buscarporId(@PathVariable Integer id){
-		return talRepo.obtenerporId(id);
+	public ResponseEntity<Map<String, Object>> findByIdTalla(@PathVariable Integer id){
+		return talRepo.findByIdTalla(id);
 	}
 	
 	  // Registrar
     @PostMapping("/registrar")
-    public ResponseEntity<Map<String, Object>> registrar(@RequestBody Talla talla) {
-        return talRepo.Agregar(talla);
+    public ResponseEntity<Map<String, Object>> saveTalla(@RequestBody Talla talla) {
+        return talRepo.saveTalla(talla);
     }
 	
 }

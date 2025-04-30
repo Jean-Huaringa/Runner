@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +20,7 @@ import com.cibertec.runner.service.ColorService;
 
 
 @Service
-public class ColorServiceImpl implements ColorService{
+public class ColorServiceImp implements ColorService{
 
 	
 	
@@ -28,7 +28,7 @@ public class ColorServiceImpl implements ColorService{
 	private IColorRepository colRepo;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listarTodos() {
+	public ResponseEntity<Map<String, Object>> findAllListColor() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		List<Color> colores = colRepo.findAll(Sort.by("id").ascending());
@@ -53,7 +53,7 @@ public class ColorServiceImpl implements ColorService{
 	
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> obtenerporId(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdColor(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		Optional<Color> color = colRepo.findById(id);
 
@@ -72,7 +72,7 @@ public class ColorServiceImpl implements ColorService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> agregarColor(Color color) {
+	public ResponseEntity<Map<String, Object>> saveColor(Color color) {
 
 	    Map<String, Object> respuesta = new LinkedHashMap<>();
 

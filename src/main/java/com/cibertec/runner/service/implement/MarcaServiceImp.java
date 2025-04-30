@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImp;
+package com.cibertec.runner.service.implement;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -11,29 +11,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.model.Categoria;
-import com.cibertec.runner.repository.ICategoriaRepository;
-import com.cibertec.runner.service.CategoriaService;
+import com.cibertec.runner.model.Marca;
+import com.cibertec.runner.repository.IMarcaRepository;
+import com.cibertec.runner.service.MarcaService;
 
 @Service
-public class CategoriaServiceImp implements CategoriaService{
+public class MarcaServiceImp implements MarcaService{
 	
 	@Autowired
-	private ICategoriaRepository dao;
+	private IMarcaRepository dao;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listCategorias() {
+	public ResponseEntity<Map<String, Object>> findAllListMarcas() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LISTADO DE CATEGORIAS
-		List<Categoria> categorias = dao.findAll();
+		// CAPTURA LISTADO DE MARCAS
+		List<Marca> marcas = dao.findAll();
 		
 		// VERIFICAR SI LA LISTA ESTA VACIA
-		if(!categorias.isEmpty()) {
+		if(!marcas.isEmpty()) {
 			// MENSAJE CON ENVIO DE LISTADO
-			respuesta.put("mensaje", "Listado de categorias");
+			respuesta.put("mensaje", "Listado de marcas");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categorias", categorias);
+			respuesta.put("marcas", marcas);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
@@ -41,28 +41,28 @@ public class CategoriaServiceImp implements CategoriaService{
 			respuesta.put("mensaje", "No existen registros");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
+
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listCategoriaById(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdMarca(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA CATEGORIA BUSCADA POR ID
-		Optional<Categoria> categoria = dao.findById(id);
+		// CAPTURA LA MARCA BUSCADA POR ID
+		Optional<Marca> marca = dao.findById(id);
 		
-		// VERIFICA SI LA CATEGORIA EXISTE
-		if(categoria.isPresent()) {
-			// MENSAJE CON LA CATEGORIA ENCONTRADA
-			respuesta.put("mensaje", "Categoria encontrada");
+		// VERIFICA SI LA MARCA EXISTE
+		if(marca.isPresent()) {
+			// MENSAJE CON LA MARCA ENCONTRADA
+			respuesta.put("mensaje", "Marca encontrada");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categoria", categoria.get());
+			respuesta.put("categoria", marca.get());
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
-			// MENSAJE SI NO ENCUENTRA CATEGORIA
+			// MENSAJE SI NO ENCUENTRA MARCA
 			respuesta.put("mensaje", "No se encuentran registros con el ID: " + id);
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
@@ -72,41 +72,41 @@ public class CategoriaServiceImp implements CategoriaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> createCategoria(Categoria c) {
+	public ResponseEntity<Map<String, Object>> saveMarca(Marca m) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		try {
 			// REALIZA REGISTRO
-			dao.save(c);
+			dao.save(m);
 			
-			// MENSAJE DE EXITO EN LA CREACION
-			respuesta.put("mensaje", "Categoria creada");
+			// MENSAJE DE EXITO EN EL CREACION
+			respuesta.put("mensaje", "Marca creada");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("categoria", c);
+			respuesta.put("marca", m);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 		} catch (Exception e) {
-			// MENSAJE  EN CASO DE ERROR EN LA CREACION
-			respuesta.put("mensaje", "Error al crear categoria");
+			// MENSAJE EN CASO DE ERROR EN LA CREACION
+			respuesta.put("mensaje", "Error al crear marca");
 			respuesta.put("error", e.getMessage());
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
 			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);			
 		}
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> updateCategoria(Categoria c, Integer id) {
+	public ResponseEntity<Map<String, Object>> updateMarca(Marca m, Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
-		Optional<Categoria> buscaCategoria = dao.findById(id);
+		// CAPTURA LA MARCA BUSCADA POR SU ID
+		Optional<Marca> buscaMarca = dao.findById(id);
 		
 		// VERIFICA SI LA CATEGORIA YA EXISTE EN LA BD
-		if(!buscaCategoria.isPresent()) {
-			// MENSAJE EN CASO LA CATEGORIA NO EXISTE
-			respuesta.put("mensaje", "La categoria con el ID especificado no existe");
+		if(!buscaMarca.isPresent()) {
+			// MENSAJE EN CASO LA MARCA NO EXISTE
+			respuesta.put("mensaje", "La marca con el ID especificado no existe");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
 			
@@ -115,22 +115,22 @@ public class CategoriaServiceImp implements CategoriaService{
 		
 		try {
 			// ACTUALIZA VALORES DE LA CATEGORIA A ACTUALIZAR
-			Categoria categoriaActual = buscaCategoria.get();
-			categoriaActual.setNombre(c.getNombre());
+			Marca marcaActual = buscaMarca.get();
+			marcaActual.setNombre(m.getNombre());
 			
-			// CAPTURA CATEGORIA ACTUALIZADA
-			Categoria categoriaActualizada = dao.save(categoriaActual);
+			// CAPTURA MARCA ACTUALIZADA
+			Marca marcaActualizada = dao.save(marcaActual);
 			
 			// MENSAJE DE EXITO EN LA ACTUALIZACION
-			respuesta.put("mensaje", "Categoria actualizada con exito");
+			respuesta.put("mensaje", "Marca actualizada con exito");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("categoria", categoriaActualizada);
+			respuesta.put("marca", marcaActualizada);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 		} catch (Exception e) {
 			// MENSAJE EN CASO DE ERROR
-			respuesta.put("mensaje", "Error al actualizar categoria");
+			respuesta.put("mensaje", "Error al actualizar marca");
 			respuesta.put("error", e.getMessage());
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -140,21 +140,21 @@ public class CategoriaServiceImp implements CategoriaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deleteCategoria(Integer id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdMarca(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
-		Optional<Categoria> buscaCategoria = dao.findById(id);
+		// CAPTURA LA MARCA BUSCADA POR SU ID
+		Optional<Marca> buscaMarca = dao.findById(id);
 		
 		// VERIFICA SI LA CATEGORIA EXISTE
-		if(buscaCategoria.isPresent()) {
-			// ELIMINA LA CATEGORIA
-			dao.delete(buscaCategoria.get());
+		if (buscaMarca.isPresent()) {
+			// ELIMINA LA MARCA
+			dao.delete(buscaMarca.get());
 			
-			// RESPUESTA EN CASO DE EXITO EN LA ELIMINACION
-			respuesta.put("mensaje", "Categoria eliminada con exito");
+			// MENSAJE EN CASO DE EXITO EN LA ELIMINACION
+			respuesta.put("mensaje", "Marca eliminada con exito");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			
+
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
 			// MENSAJE EN CASO DE ERROR EN LA ELIMINACION

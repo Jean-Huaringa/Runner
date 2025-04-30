@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import com.cibertec.runner.model.Transaccion;
 import com.cibertec.runner.model.TransaccionId;
 
-public interface ITransaccionService {
+public interface TransaccionService {
 		
-	List<Transaccion> listarTodas();
+	List<Transaccion> findAllListTransaccion();
     
-    Transaccion registrar(Transaccion transaccion);
+    Transaccion saveTransaccion(Transaccion transaccion);
     
-    public  ResponseEntity<Map<String, Object>> eliminarTransaccion(TransaccionId id);
+    public  ResponseEntity<Map<String, Object>> deleteByIdTransaccion(TransaccionId id);
 	
 }

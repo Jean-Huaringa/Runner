@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,14 +21,14 @@ import com.cibertec.runner.service.ProductoService;
 
 @Service
 
-public class ProductoServiceImpl implements ProductoService  {
+public class ProductoServiceImp implements ProductoService  {
  
 	@Autowired
  private IProductoRepository prorepo;
 	
 	
 	@Override 
-	public ResponseEntity<Map<String, Object>> listarTodos() {
+	public ResponseEntity<Map<String, Object>> findAllProductos() {
 		
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
@@ -51,7 +51,7 @@ public class ProductoServiceImpl implements ProductoService  {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> obtenerPorId(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdProducto(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		Optional<Producto> producto = prorepo.findById(id);
 
@@ -71,7 +71,7 @@ public class ProductoServiceImpl implements ProductoService  {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> registrar(ProductoDTO productoDTO) {
+	public ResponseEntity<Map<String, Object>> saveProducto(ProductoDTO productoDTO) {
 
 	    Map<String, Object> respuesta = new LinkedHashMap<>();
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -95,7 +95,7 @@ public class ProductoServiceImpl implements ProductoService  {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> actualizar(Producto producto, Integer id) {
+	public ResponseEntity<Map<String, Object>> updateProducto(Producto producto, Integer id) {
 
 	    Map<String, Object> response = new HashMap<>();
 	    try {
@@ -126,10 +126,8 @@ public class ProductoServiceImpl implements ProductoService  {
 	    }
 	}
 
-	
-
 	@Override
-	public ResponseEntity<Map<String, Object>> eliminarProducto(Integer id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdProducto(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		 String fechaActual = LocalDateTime.now().format(formatter);

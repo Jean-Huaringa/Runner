@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,19 +14,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.ModeloDTO;
 import com.cibertec.runner.model.Modelo;
-import com.cibertec.runner.model.ModeloDTO;
 import com.cibertec.runner.repository.IModeloRepository;
 import com.cibertec.runner.service.ModeloService;
 
 @Service
-public class ModeloServiceImpl implements ModeloService{
+public class ModeloServiceImp implements ModeloService{
 	
 	@Autowired
 	private IModeloRepository dao;
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> listModelos(){
+	public ResponseEntity<Map<String, Object>> findAllModelos(){
 		Map<String, Object> respuesta = new HashMap<>();
 		List<Modelo> modelos = dao.findAll();
 		
@@ -46,7 +46,7 @@ public class ModeloServiceImpl implements ModeloService{
 	}
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> agregaModelo(ModeloDTO modeloDTO){
+	public ResponseEntity<Map<String, Object>> saveModelo(ModeloDTO modeloDTO){
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String fechaActual = LocalDateTime.now().format(formatter);
@@ -74,7 +74,7 @@ public class ModeloServiceImpl implements ModeloService{
 	}
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> actualizaModelo(ModeloDTO modeloDTO, Long id){
+	public ResponseEntity<Map<String, Object>> updateModelo(ModeloDTO modeloDTO, Long id){
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -112,7 +112,7 @@ public class ModeloServiceImpl implements ModeloService{
 	}
 	
 	@Override
-	public ResponseEntity<Map<String, Object>> eliminarLogicoModelo(Long id) {
+	public ResponseEntity<Map<String, Object>> deleteByIdModelo(Long id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String fechaActual = LocalDateTime.now().format(formatter);

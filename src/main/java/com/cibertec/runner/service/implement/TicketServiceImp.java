@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImpl;
+package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,19 +32,13 @@ public class TicketServiceImp implements TicketService {
 	@Autowired
 	private IUsuarioRepository usuRepo;
 	
-	
-	
-	
-	
 	@Override
-	public ResponseEntity<Map<String, Object>> listarTodos() {
+	public ResponseEntity<Map<String, Object>> findAllTickets() {
 		
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 			List<Ticket> tickets = tkRepo.findAll();
-		
-		
-		
+
 		if (!tickets.isEmpty()) {
 			respuesta.put("mensaje", "Lista de Tickets");
 			respuesta.put("fecha", new Date());
@@ -64,7 +58,7 @@ public class TicketServiceImp implements TicketService {
 	
 	@Override
 	@Transactional
-	public ResponseEntity<Map<String, Object>> registrar(TicketDTO ticketDTO) {
+	public ResponseEntity<Map<String, Object>> saveTicket(TicketDTO ticketDTO) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 	    String fechaActual = LocalDateTime.now().format(formatter);
@@ -90,7 +84,7 @@ public class TicketServiceImp implements TicketService {
 	
 
 	@Override
-	public ResponseEntity<Map<String, Object>> obtenerPorId(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdTicket(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		Optional<Ticket> ticket = tkRepo.findById(id);
 
@@ -116,7 +110,7 @@ public class TicketServiceImp implements TicketService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<Map<String, Object>> actualizar(TicketDTO ticketDTO, Integer id) {
+	public ResponseEntity<Map<String, Object>> updateTicket(TicketDTO ticketDTO, Integer id) {
 		
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 	    
@@ -153,7 +147,7 @@ public class TicketServiceImp implements TicketService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> eliminarTicket(Integer id) {
+	public ResponseEntity<Map<String, Object>> deleteTicket(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		 String fechaActual = LocalDateTime.now().format(formatter);

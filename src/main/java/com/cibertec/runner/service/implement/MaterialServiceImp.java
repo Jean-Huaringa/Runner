@@ -1,4 +1,4 @@
-package com.cibertec.runner.serviceImp;
+package com.cibertec.runner.service.implement;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -11,29 +11,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.model.Marca;
-import com.cibertec.runner.repository.IMarcaRepository;
-import com.cibertec.runner.service.MarcaService;
+import com.cibertec.runner.model.Material;
+import com.cibertec.runner.repository.IMaterialRepository;
+import com.cibertec.runner.service.MaterialService;
 
 @Service
-public class MarcaServiceImp implements MarcaService{
-	
+public class MaterialServiceImp implements MaterialService{
+
 	@Autowired
-	private IMarcaRepository dao;
+	private IMaterialRepository dao;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> listMarcas() {
+	public ResponseEntity<Map<String, Object>> findAllMateriales() {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LISTADO DE MARCAS
-		List<Marca> marcas = dao.findAll();
+		// CAPTURA LISTADO DE MATERIALES
+		List<Material> materiales = dao.findAll();
 		
 		// VERIFICAR SI LA LISTA ESTA VACIA
-		if(!marcas.isEmpty()) {
+		if(!materiales.isEmpty()) {
 			// MENSAJE CON ENVIO DE LISTADO
-			respuesta.put("mensaje", "Listado de marcas");
+			respuesta.put("mensaje", "Listado de materiales");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("marcas", marcas);
+			respuesta.put("materiales", materiales);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
@@ -41,28 +41,28 @@ public class MarcaServiceImp implements MarcaService{
 			respuesta.put("mensaje", "No existen registros");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
-
+			
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 	}
-
+	
 	@Override
-	public ResponseEntity<Map<String, Object>> listMarcaById(Integer id) {
+	public ResponseEntity<Map<String, Object>> findByIdMateriales(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR ID
-		Optional<Marca> marca = dao.findById(id);
+		// CAPTURA MATERIAL BUSCADO POR ID
+		Optional<Material> material = dao.findById(id);
 		
-		// VERIFICA SI LA MARCA EXISTE
-		if(marca.isPresent()) {
-			// MENSAJE CON LA MARCA ENCONTRADA
-			respuesta.put("mensaje", "Marca encontrada");
+		// VERIFICA SI EL MATERIAL EXISTE
+		if(material.isPresent()) {
+			// MENSAJE CON EL MATERIAL ENCONTRADO
+			respuesta.put("mensaje", "Material encontrado");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categoria", marca.get());
+			respuesta.put("material", material.get());
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
 		} else {
-			// MENSAJE SI NO ENCUENTRA MARCA
+			// MENSAJE SI NO ENCUENTRA MATERIAL
 			respuesta.put("mensaje", "No se encuentran registros con el ID: " + id);
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.NOT_FOUND);
@@ -72,65 +72,23 @@ public class MarcaServiceImp implements MarcaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> createMarca(Marca m) {
+	public ResponseEntity<Map<String, Object>> saveMaterial(Material m) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 		
 		try {
 			// REALIZA REGISTRO
 			dao.save(m);
 			
-			// MENSAJE DE EXITO EN EL CREACION
-			respuesta.put("mensaje", "Marca creada");
+			// MENSAJE DE EXITO EN LA CREACION
+			respuesta.put("mensaje", "Material creado");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("marca", m);
+			respuesta.put("material", m);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 		} catch (Exception e) {
 			// MENSAJE EN CASO DE ERROR EN LA CREACION
-			respuesta.put("mensaje", "Error al crear marca");
-			respuesta.put("error", e.getMessage());
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);			
-		}
-	}
-
-	@Override
-	public ResponseEntity<Map<String, Object>> updateMarca(Marca m, Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR SU ID
-		Optional<Marca> buscaMarca = dao.findById(id);
-		
-		// VERIFICA SI LA CATEGORIA YA EXISTE EN LA BD
-		if(!buscaMarca.isPresent()) {
-			// MENSAJE EN CASO LA MARCA NO EXISTE
-			respuesta.put("mensaje", "La marca con el ID especificado no existe");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-		
-		try {
-			// ACTUALIZA VALORES DE LA CATEGORIA A ACTUALIZAR
-			Marca marcaActual = buscaMarca.get();
-			marcaActual.setNombre(m.getNombre());
-			
-			// CAPTURA MARCA ACTUALIZADA
-			Marca marcaActualizada = dao.save(marcaActual);
-			
-			// MENSAJE DE EXITO EN LA ACTUALIZACION
-			respuesta.put("mensaje", "Marca actualizada con exito");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("marca", marcaActualizada);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		} catch (Exception e) {
-			// MENSAJE EN CASO DE ERROR
-			respuesta.put("mensaje", "Error al actualizar marca");
+			respuesta.put("mensaje", "Error al crear material");
 			respuesta.put("error", e.getMessage());
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -140,18 +98,59 @@ public class MarcaServiceImp implements MarcaService{
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deleteMarca(Integer id) {
+	public ResponseEntity<Map<String, Object>> updateMaterial(Material m, Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR SU ID
-		Optional<Marca> buscaMarca = dao.findById(id);
+		// CAPTURA MATERIAL BUSCADO POR ID
+		Optional<Material> buscaMaterial = dao.findById(id);
 		
-		// VERIFICA SI LA CATEGORIA EXISTE
-		if (buscaMarca.isPresent()) {
-			// ELIMINA LA MARCA
-			dao.delete(buscaMarca.get());
+		// VERIFICA SI EL MATERIAL YA EXISTE EN LA BD
+		if(!buscaMaterial.isPresent()) {
+			// MENSAJE SI NO ENCUENTRA MATERIAL
+			respuesta.put("mensaje", "El material con el ID especifico no existe");
+			respuesta.put("fecha", new Date());
+			respuesta.put("status", HttpStatus.NOT_FOUND);
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+		}
+		
+		try {
+			// ACTUALIZA VALORES DE EL MATERIAL A ACTUALIZAR
+			Material materialActual = buscaMaterial.get();
+			materialActual.setNombre(m.getNombre());
 			
-			// MENSAJE EN CASO DE EXITO EN LA ELIMINACION
-			respuesta.put("mensaje", "Marca eliminada con exito");
+			// CAPTURA MATERIAL ACTUALIZADO
+			Material materialActualizado = dao.save(materialActual);
+			
+			// MENSAJE DE EXITO EN LA ACTUALIZACION
+			respuesta.put("mensaje", "Material actualizado con exito");
+			respuesta.put("fecha", new Date());
+			respuesta.put("status", HttpStatus.CREATED);
+			respuesta.put("material", materialActualizado);
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+		} catch(Exception e) {
+			// MENSAJE EN CASO DE ERROR
+			respuesta.put("mensaje", "Error al actualizar material");
+			respuesta.put("error", e.getMessage());
+			respuesta.put("fecha", new Date());
+			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> deleteByIdMaterial(Integer id) {
+		Map<String, Object> respuesta = new LinkedHashMap<>();
+		// CAPTURA MATERIAL BUSCADO POR ID
+		Optional<Material> buscaMaterial = dao.findById(id);
+		
+		// VERIFICA SI EL MATERIAL YA EXISTE
+		if(buscaMaterial.isPresent()) {
+			dao.delete(buscaMaterial.get());
+			
+			// RESPUESTA EN CASO DE EXITO EN LA ELIMINACION
+			respuesta.put("mensaje", "Material eliminado con exito");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
 
@@ -165,5 +164,5 @@ public class MarcaServiceImp implements MarcaService{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
 		}
 	}
-
+	
 }
