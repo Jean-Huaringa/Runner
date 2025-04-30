@@ -110,6 +110,8 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
+		
+		
 	</dependencies>
 	<!--
 	<build>
