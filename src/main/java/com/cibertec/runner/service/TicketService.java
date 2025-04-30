@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 
 import com.cibertec.runner.dto.TicketDTO;
-import com.cibertec.runner.model.Ticket;
 
 public interface TicketService {
 	

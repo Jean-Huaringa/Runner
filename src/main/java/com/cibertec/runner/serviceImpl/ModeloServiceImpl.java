@@ -120,7 +120,7 @@ public class ModeloServiceImpl implements ModeloService{
 		
 		if(modEncontrado.isPresent()) {
 			Modelo mod = modEncontrado.get();
-			mod.setEstado(0.0);
+			mod.setEstado(false);
 			dao.save(mod);
 			respuesta.put("mensaje", "Mascota eliminado correctamente");
 			respuesta.put("fecha", fechaActual);
