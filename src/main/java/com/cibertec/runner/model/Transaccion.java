@@ -19,7 +19,7 @@ public class Transaccion {
 	@Column(name = "unidades", nullable = false)
 	private Integer unidades;
 	
-	@Column(name = "tipo", nullable = false, length = 10)
+	@Column(name = "monto_total", nullable = false, length = 10)
     private Double montoTotal;
 
 	@ManyToOne
