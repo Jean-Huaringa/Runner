@@ -33,7 +33,7 @@ public class SecurityConfig {
 				.and()
 				.csrf(csrf -> csrf.disable()) // Desactiva CSRF Permite el acceso sin autenticación a las rutas /acount/registro y /acount/create-token
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/account/register", "/account/sign-in").permitAll() // Permite acceso sin login a estas rutas
+						.requestMatchers("/api/**").permitAll() // Permite acceso sin login a estas rutas
 						.anyRequest().authenticated()) // El resto requiere autenticación
 				.addFilterBefore(
 						new JwtAuthenticationFilter(jwtService, userDetailsService), 

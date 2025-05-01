@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.dto.request.LoginDTO;
 import com.cibertec.runner.dto.request.RegisterUserDTO;
@@ -20,6 +21,7 @@ import com.cibertec.runner.service.AccountService;
 import com.cibertec.runner.service.JwtService;
 import com.cibertec.runner.util.ValidateText;
 
+@Service
 public class AccountServiceImp implements AccountService{
 
 	@Autowired

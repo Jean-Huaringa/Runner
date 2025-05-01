@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.model.Distrito;
 import com.cibertec.runner.repository.IDistritoRepository;
 import com.cibertec.runner.service.DistritoService;
 
+@Service
 public class DistritoServiceImp implements DistritoService{
 	@Autowired
 	private IDistritoRepository repository;

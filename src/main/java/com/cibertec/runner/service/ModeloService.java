@@ -15,6 +15,5 @@ public interface ModeloService {
 	public ResponseEntity<Map<String, Object>> updateModelo(ModeloDTO modeloDTO, Long id);
 	
 	public ResponseEntity<Map<String, Object>> deleteByIdModelo(Long id);
-	
 
 }
