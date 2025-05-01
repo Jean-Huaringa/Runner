@@ -17,9 +17,7 @@ import com.cibertec.runner.service.implement.TallaServiceImp;
 @RestController
 @RequestMapping("/api/talla")
 public class TallaController {
-	
-	
-	
+
 	@Autowired
 	private TallaServiceImp talRepo;
 	

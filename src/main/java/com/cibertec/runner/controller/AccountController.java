@@ -18,14 +18,14 @@ import com.cibertec.runner.dto.request.UpdatePasswordDTO;
 import com.cibertec.runner.dto.request.UpdateUserDTO;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.dto.response.UserResponse;
-import com.cibertec.runner.service.AccountService;
+import com.cibertec.runner.service.implement.AccountServiceImp;
 
 @RestController
 @RequestMapping("/api/acount")
 public class AccountController {
 
 	@Autowired
-	private AccountService userService;
+	private AccountServiceImp userService;
  
 	@PostMapping("/register") // registrar usuario
 	public ResponseEntity<SuccessResponse<String>> registerUser(@RequestBody RegisterUserDTO request) {

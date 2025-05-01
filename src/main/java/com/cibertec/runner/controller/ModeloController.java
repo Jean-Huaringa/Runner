@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cibertec.runner.dto.ModeloDTO;
+import com.cibertec.runner.dto.request.ModeloDTO;
 import com.cibertec.runner.service.implement.ModeloServiceImp;
 
 @RestController

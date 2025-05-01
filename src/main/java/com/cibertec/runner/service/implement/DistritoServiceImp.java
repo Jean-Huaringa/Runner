@@ -12,49 +12,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.model.Color;
-import com.cibertec.runner.repository.IColorRepository;
-import com.cibertec.runner.service.ColorService;
+import com.cibertec.runner.model.Distrito;
+import com.cibertec.runner.repository.IDistritoRepository;
+import com.cibertec.runner.service.DistritoService;
 
-@Service
-public class ColorServiceImp implements ColorService {
-
+public class DistritoServiceImp implements DistritoService{
 	@Autowired
-	private IColorRepository colRepo;
-
+	private IDistritoRepository repository;
+	
 	@Override
-	public ResponseEntity<Map<String, Object>> findAllListColor() {
+	public ResponseEntity<Map<String, Object>> findByIdDistrito(Integer id) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
+		Optional<Distrito> distrito = repository.findById(id);
 
-		List<Color> colores = colRepo.findAll(Sort.by("id").ascending());
-
-		if (!colores.isEmpty()) {
-			respuesta.put("mensaje", "Lista de Colores");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("Colores", colores);
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			respuesta.put("mensaje", "No existen registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-
-	}
-
-	@Override
-	public ResponseEntity<Map<String, Object>> findByIdColor(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		Optional<Color> color = colRepo.findById(id);
-
-		if (color.isPresent()) {
+		if (distrito.isPresent()) {
 			respuesta.put("mensaje", "Color Encontrada");
 			respuesta.put("fecha", new Date());
 			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("color", color.get());
+			respuesta.put("color", distrito.get());
 			return ResponseEntity.ok().body(respuesta);
 		} else {
 			respuesta.put("mensaje", "No se encuentra un registro para el ID: " + id);
@@ -65,8 +41,27 @@ public class ColorServiceImp implements ColorService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> saveColor(Color color) {
+	public ResponseEntity<Map<String, Object>> findAllListDistrito() {
+		Map<String, Object> respuesta = new LinkedHashMap<>();
 
+		List<Distrito> distrito = repository.findAll(Sort.by("id").ascending());
+
+		if (!distrito.isEmpty()) {
+			respuesta.put("mensaje", "Lista de Colores");
+			respuesta.put("fecha", new Date());
+			respuesta.put("status", HttpStatus.OK);
+			respuesta.put("Colores", distrito);
+			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+		} else {
+			respuesta.put("mensaje", "No existen registros");
+			respuesta.put("fecha", new Date());
+			respuesta.put("status", HttpStatus.NOT_FOUND);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+		}
+	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> saveDistrito(Distrito distrito) {
 		Map<String, Object> respuesta = new LinkedHashMap<>();
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -74,7 +69,7 @@ public class ColorServiceImp implements ColorService {
 
 		// valida que el color no se repita y lo compara con el parametro de entrada en
 		// este caso para el ombre del color
-		if (colRepo.existsByNombre(color.getNombre())) {
+		if (repository.existsByNombre(distrito.getNombre())) {
 			respuesta.put("mensaje", "El Color ya existe");
 			respuesta.put("fecha", fechaActual);
 			respuesta.put("status", HttpStatus.CONFLICT);
@@ -82,13 +77,12 @@ public class ColorServiceImp implements ColorService {
 		}
 
 		// guarda todo el objeto color, osea lo registra
-		colRepo.save(color);
+		repository.save(distrito);
 		respuesta.put("mensaje", "Se creó correctamente el Color");
 		respuesta.put("fecha", fechaActual);
 		respuesta.put("status", HttpStatus.CREATED);
-		respuesta.put("color", color);
+		respuesta.put("color", distrito);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
 	}
-
 }

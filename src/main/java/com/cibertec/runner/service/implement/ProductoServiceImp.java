@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.dto.ProductoDTO;
+import com.cibertec.runner.dto.request.ProductoDTO;
 import com.cibertec.runner.model.Producto;
 import com.cibertec.runner.repository.IProductoRepository;
 import com.cibertec.runner.service.ProductoService;

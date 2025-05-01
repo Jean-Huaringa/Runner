@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 
-import com.cibertec.runner.dto.ModeloDTO;
+import com.cibertec.runner.dto.request.ModeloDTO;
 
 public interface ModeloService {
 	

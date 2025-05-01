@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.cibertec.runner.dto.ModeloDTO;
+import com.cibertec.runner.dto.request.ModeloDTO;
 import com.cibertec.runner.model.Modelo;
 import com.cibertec.runner.repository.IModeloRepository;
 import com.cibertec.runner.service.ModeloService;

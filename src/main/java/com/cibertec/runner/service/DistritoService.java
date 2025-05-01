@@ -1,18 +1,18 @@
 package com.cibertec.runner.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.model.Distrito;
-import com.cibertec.runner.repository.IDistritoRepository;
 
 @Service
-public class DistritoService {
+public interface DistritoService {
+
+	public ResponseEntity<Map<String , Object>> findByIdDistrito(Integer id);
 	
-	@Autowired
-	private IDistritoRepository repository;
+	public ResponseEntity<Map<String, Object>> findAllListDistrito();
 	
-	public Distrito findById(int id) {
-		return repository.findById(id).orElse(null);
-	}
+	public ResponseEntity<Map<String , Object>> saveDistrito(Distrito distrito);
 }
