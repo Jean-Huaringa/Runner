@@ -1,11 +1,7 @@
 package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.dto.request.TicketDTO;
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Ticket;
 import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.repository.ITicketRepository;
@@ -31,148 +28,110 @@ public class TicketServiceImp implements TicketService {
 	
 	@Autowired
 	private IUsuarioRepository usuRepo;
-	
-	@Override
-	public ResponseEntity<Map<String, Object>> findAllTickets() {
-		
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		
-			List<Ticket> tickets = tkRepo.findAll();
 
-		if (!tickets.isEmpty()) {
-			respuesta.put("mensaje", "Lista de Tickets");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("Tickets", tickets);
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			respuesta.put("mensaje", "No existen registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
+    @Override
+    public ResponseEntity<SuccessResponse<List<Ticket>>> findAllTickets() {
+        List<Ticket> tickets = tkRepo.findAll();
 
+        if (!tickets.isEmpty()) {
+            SuccessResponse<List<Ticket>> response = SuccessResponse.<List<Ticket>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(tickets)
+                    .build();
 
-	
-	}
-	
-	@Override
-	@Transactional
-	public ResponseEntity<Map<String, Object>> saveTicket(TicketDTO ticketDTO) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-	    String fechaActual = LocalDateTime.now().format(formatter);
-	    Usuario usuEncontrado = usuRepo.findById(ticketDTO.getIdUsr())
-	            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-		  
-	    Ticket ticket = new Ticket();
-	    ticket.setIdUsr(usuEncontrado.getId());
-	    ticket.setDireccion(ticketDTO.getDireccion());
-	 
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            throw new RuntimeException("No existen registros");
+        }
+    }
 
+    @Override
+    public ResponseEntity<SuccessResponse<Ticket>> findByIdTicket(Integer id) {
+        Optional<Ticket> ticket = tkRepo.findById(id);
 
-	    tkRepo.save(ticket);
+        if (ticket.isPresent()) {
+            SuccessResponse<Ticket> response = SuccessResponse.<Ticket>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(ticket.get())
+                    .build();
 
-	    respuesta.put("mensaje", "Se ha agregado correctamente el Ticket");
-	    respuesta.put("fecha", fechaActual);
-	    respuesta.put("status", HttpStatus.CREATED);
-	    respuesta.put("Ticket", ticket);
-	    
-	    return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+            return ResponseEntity.ok(response);
+        } else {
+            throw new RuntimeException("No se encuentra un registro para el ID: " + id);
+        }
+    }
 
-	}
-	
+    @Override
+    @Transactional
+    public ResponseEntity<SuccessResponse<Ticket>> saveTicket(TicketDTO ticketDTO) {
+        Usuario usuario = usuRepo.findById(ticketDTO.getIdUsr())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-	@Override
-	public ResponseEntity<Map<String, Object>> findByIdTicket(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		Optional<Ticket> ticket = tkRepo.findById(id);
+        Ticket ticket = new Ticket();
+        ticket.setIdUsr(usuario.getId());
+        ticket.setDireccion(ticketDTO.getDireccion());
 
-	    if (ticket.isPresent()) {
-	        respuesta.put("mensaje", "Ticket Encontrado");
-	        respuesta.put("fecha", new Date());
-	        respuesta.put("status", HttpStatus.OK);
-	        respuesta.put("ticket", ticket.get());
-	        return ResponseEntity.ok().body(respuesta);
-	    } else {
-	        respuesta.put("mensaje", "No se encuentra un registro para el ID: " + id);
-	        respuesta.put("fecha", new Date());
-	        respuesta.put("status", HttpStatus.NOT_FOUND);
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-	    }
+        Ticket ticketGuardado = tkRepo.save(ticket);
 
-	}
+        SuccessResponse<Ticket> response = SuccessResponse.<Ticket>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CREATED.value())
+                .success(HttpStatus.CREATED.getReasonPhrase())
+                .response(ticketGuardado)
+                .build();
 
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
+    @Override
+    @Transactional
+    public ResponseEntity<SuccessResponse<Ticket>> updateTicket(TicketDTO ticketDTO, Integer id) {
+        Optional<Ticket> ticketOpt = tkRepo.findById(id);
 
+        Usuario usuario = usuRepo.findById(ticketDTO.getIdUsr())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
+        if (ticketOpt.isPresent()) {
+            Ticket ticket = ticketOpt.get();
+            ticket.setIdUsr(usuario.getId());
+            ticket.setDireccion(ticketDTO.getDireccion());
 
+            Ticket ticketActualizado = tkRepo.save(ticket);
 
-	@Override
-	@Transactional
-	public ResponseEntity<Map<String, Object>> updateTicket(TicketDTO ticketDTO, Integer id) {
-		
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-	    
-	    Optional<Ticket> tickEncontrado = tkRepo.findById(id);
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-	    String fechaActual = LocalDateTime.now().format(formatter);
+            SuccessResponse<Ticket> response = SuccessResponse.<Ticket>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(ticketActualizado)
+                    .build();
 
-	    Usuario usuEncontrado = usuRepo.findById(ticketDTO.getIdUsr())
-	            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-	    
-		if(tickEncontrado.isPresent()) {
-			
-			Ticket ticket = tickEncontrado.get();
-			ticket.setIdUsr(usuEncontrado.getId());
-		    ticket.setDireccion(ticketDTO.getDireccion());
-		
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            throw new RuntimeException("Ticket no encontrado para actualizar");
+        }
+    }
 
-			tkRepo.save(ticket);
-			
-			respuesta.put("mensaje", "Ticket modificado correctamente");
-			respuesta.put("fecha", fechaActual);
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("ticket", ticket);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		}else {
-			respuesta.put("mensaje", "Sin registros para el ID: " + id);
-			respuesta.put("fecha", fechaActual);
-			respuesta.put("status", HttpStatus.NOT_FOUND);
+    @Override
+    public ResponseEntity<SuccessResponse<String>> deleteTicket(Integer id) {
+        Optional<Ticket> ticket = tkRepo.findById(id);
 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
+        if (ticket.isPresent()) {
+            tkRepo.delete(ticket.get());
 
-	}
+            SuccessResponse<String> response = SuccessResponse.<String>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NO_CONTENT.value())
+                    .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+                    .response("Ticket eliminado correctamente")
+                    .build();
 
-	@Override
-	public ResponseEntity<Map<String, Object>> deleteTicket(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		 String fechaActual = LocalDateTime.now().format(formatter);
-		 
-		 Optional<Ticket> ticketExiste = tkRepo.findById(id);
-		
-		if (ticketExiste.isPresent()) {
-	        tkRepo.delete(ticketExiste.get());
-	        respuesta.put("mensaje", "Ticket eliminado con éxito");
-	        respuesta.put("fecha", fechaActual);
-	        respuesta.put("status", HttpStatus.OK);
-
-	        return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-	    } else {
-	        respuesta.put("mensaje", "No se realizo la Eliminacion, Ticket no encontrado");
-	        respuesta.put("fecha", fechaActual);
-	        respuesta.put("status", HttpStatus.NOT_FOUND);
-
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-	    }
-
-	}
-
-	
-	
-
-
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
+        } else {
+            throw new RuntimeException("No se realizó la eliminación, Ticket no encontrado");
+        }
+    }
 }

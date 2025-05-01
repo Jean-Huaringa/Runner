@@ -1,6 +1,6 @@
 package com.cibertec.runner.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Material;
 import com.cibertec.runner.service.implement.MaterialServiceImp;
 
@@ -24,27 +25,27 @@ public class MaterialController {
 	private MaterialServiceImp ms;
 	
 	@GetMapping("/listado")
-	public ResponseEntity<Map<String, Object>> findAllMateriales() {
+	public ResponseEntity<SuccessResponse<List<Material>>> findAllMateriales() {
 		return ms.findAllMateriales();
 	}
 	
 	@GetMapping("/buscar/{id}")
-	public ResponseEntity<Map<String, Object>> findByIdMateriales(@PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<Material>> findByIdMateriales(@PathVariable Integer id) {
 		return ms.findByIdMateriales(id);
 	}
 	
 	@PostMapping("/crear")
-	public ResponseEntity<Map<String, Object>> saveMaterial(@RequestBody Material m) {
+	public ResponseEntity<SuccessResponse<Material>> saveMaterial(@RequestBody Material m) {
 		return ms.saveMaterial(m);
 	}
 	
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<Map<String, Object>> updateMaterial(@RequestBody Material m, @PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<Material>> updateMaterial(@RequestBody Material m, @PathVariable Integer id) {
 		return ms.updateMaterial(m, id);
 	}
 	
 	@DeleteMapping("/eliminar/{id}")
-	public ResponseEntity<Map<String, Object>> deleteByIdMaterial(@PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<String>> deleteByIdMaterial(@PathVariable Integer id) {
 		return ms.deleteByIdMaterial(id);
 	}
 }

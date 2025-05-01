@@ -17,7 +17,8 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 		
 		// Permite al Frontend con esta (url) hacer las solicitudes HTTP
-		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		//config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
 		// Los permisos que le estoy dando al Frond
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		// Cabeceras permitidas

@@ -1,168 +1,118 @@
 package com.cibertec.runner.service.implement;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Categoria;
 import com.cibertec.runner.repository.ICategoriaRepository;
 import com.cibertec.runner.service.CategoriaService;
 
 @Service
-public class CategoriaServiceImp implements CategoriaService{
-	
+public class CategoriaServiceImp implements CategoriaService {
+
 	@Autowired
 	private ICategoriaRepository dao;
 
 	@Override
-	public ResponseEntity<Map<String, Object>> findAllListCategoria() {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LISTADO DE CATEGORIAS
+	public ResponseEntity<SuccessResponse<List<Categoria>>> findAllListCategoria() {
 		List<Categoria> categorias = dao.findAll();
-		
-		// VERIFICAR SI LA LISTA ESTA VACIA
-		if(!categorias.isEmpty()) {
-			// MENSAJE CON ENVIO DE LISTADO
-			respuesta.put("mensaje", "Listado de categorias");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categorias", categorias);
+
+		if (!categorias.isEmpty()) {
+			SuccessResponse<List<Categoria>> success = SuccessResponse.<List<Categoria>>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.CREATED.value())
+			        .success(HttpStatus.CREATED.getReasonPhrase())
+			        .response(categorias)
+			        .build();
 			
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+			return ResponseEntity.status(HttpStatus.OK).body(success);
 		} else {
-			// MENSAJE SI LA LISTA ESTA VACIA
-			respuesta.put("mensaje", "No existen registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+			throw new RuntimeException("No se encontro ningun producto");
 		}
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> findByIdCategoria(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA CATEGORIA BUSCADA POR ID
-		Optional<Categoria> categoria = dao.findById(id);
-		
-		// VERIFICA SI LA CATEGORIA EXISTE
-		if(categoria.isPresent()) {
-			// MENSAJE CON LA CATEGORIA ENCONTRADA
-			respuesta.put("mensaje", "Categoria encontrada");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categoria", categoria.get());
+	public ResponseEntity<SuccessResponse<Categoria>> findByIdCategoria(Integer id) {
+		Categoria categoria = dao.findById(id).orElse(null);
+
+		if (categoria != null) {
+			SuccessResponse<Categoria> success = SuccessResponse.<Categoria>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.CREATED.value())
+			        .success(HttpStatus.CREATED.getReasonPhrase())
+			        .response(categoria)
+			        .build();
 			
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+			return ResponseEntity.status(HttpStatus.OK).body(success);
 		} else {
-			// MENSAJE SI NO ENCUENTRA CATEGORIA
-			respuesta.put("mensaje", "No se encuentran registros con el ID: " + id);
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+			throw new RuntimeException("Problema al buscar el producto");
 		}
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> saveCategoria(Categoria c) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		
+	public ResponseEntity<SuccessResponse<Categoria>> saveCategoria(Categoria c) {
+
 		try {
-			// REALIZA REGISTRO
-			dao.save(c);
+			Categoria cate = dao.save(c);
+			SuccessResponse<Categoria> success = SuccessResponse.<Categoria>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.CREATED.value())
+			        .success(HttpStatus.CREATED.getReasonPhrase())
+			        .response(cate)
+			        .build();
 			
-			// MENSAJE DE EXITO EN LA CREACION
-			respuesta.put("mensaje", "Categoria creada");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("categoria", c);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+			return ResponseEntity.status(HttpStatus.OK).body(success);
 		} catch (Exception e) {
-			// MENSAJE  EN CASO DE ERROR EN LA CREACION
-			respuesta.put("mensaje", "Error al crear categoria");
-			respuesta.put("error", e.getMessage());
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+			throw new RuntimeException("Problema al registrar el producto");
 		}
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> updateCategoria(Categoria c, Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
-		Optional<Categoria> buscaCategoria = dao.findById(id);
+	public ResponseEntity<SuccessResponse<Categoria>> updateCategoria(Categoria c, Integer id) {
 		
-		// VERIFICA SI LA CATEGORIA YA EXISTE EN LA BD
-		if(!buscaCategoria.isPresent()) {
-			// MENSAJE EN CASO LA CATEGORIA NO EXISTE
-			respuesta.put("mensaje", "La categoria con el ID especificado no existe");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+		Categoria categoria = dao.findById(id).orElse(null);
+
+		if (categoria == null) {
+			throw new RuntimeException("Problema al buscar el producto");
 		}
+
+		categoria.setNombre(c.getNombre());
 		
-		try {
-			// ACTUALIZA VALORES DE LA CATEGORIA A ACTUALIZAR
-			Categoria categoriaActual = buscaCategoria.get();
-			categoriaActual.setNombre(c.getNombre());
-			
-			// CAPTURA CATEGORIA ACTUALIZADA
-			Categoria categoriaActualizada = dao.save(categoriaActual);
-			
-			// MENSAJE DE EXITO EN LA ACTUALIZACION
-			respuesta.put("mensaje", "Categoria actualizada con exito");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("categoria", categoriaActualizada);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		} catch (Exception e) {
-			// MENSAJE EN CASO DE ERROR
-			respuesta.put("mensaje", "Error al actualizar categoria");
-			respuesta.put("error", e.getMessage());
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
-		}
+		Categoria update = dao.save(categoria);
+		
+		SuccessResponse<Categoria> success = SuccessResponse.<Categoria>builder()
+		        .timestamp(LocalDateTime.now())
+		        .status(HttpStatus.CREATED.value())
+		        .success(HttpStatus.CREATED.getReasonPhrase())
+		        .response(update)
+		        .build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(success);
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deleteByIdCategoria(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA CATEGORIA BUSCADA POR SU ID
-		Optional<Categoria> buscaCategoria = dao.findById(id);
-		
-		// VERIFICA SI LA CATEGORIA EXISTE
-		if(buscaCategoria.isPresent()) {
-			// ELIMINA LA CATEGORIA
-			dao.delete(buscaCategoria.get());
+	public ResponseEntity<SuccessResponse<String>> deleteByIdCategoria(Integer id) {
+		Categoria buscaCategoria = dao.findById(id).orElse(null);
+
+		if (buscaCategoria != null) {
+			dao.delete(buscaCategoria);
 			
-			// RESPUESTA EN CASO DE EXITO EN LA ELIMINACION
-			respuesta.put("mensaje", "Categoria eliminada con exito");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
+			SuccessResponse<String> success = SuccessResponse.<String>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.CREATED.value())
+			        .success(HttpStatus.CREATED.getReasonPhrase())
+			        .response("Categoria eliminado correctamente")
+			        .build();
 			
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+			return ResponseEntity.status(HttpStatus.OK).body(success);
 		} else {
-			// MENSAJE EN CASO DE ERROR EN LA ELIMINACION
-			respuesta.put("mensaje", "Error al eliminar, no se encuentran registros con el ID: " + id);
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+			throw new RuntimeException("Problema al buscar el producto");
 		}
 	}
 

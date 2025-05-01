@@ -1,6 +1,6 @@
 package com.cibertec.runner.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Persona;
 import com.cibertec.runner.service.implement.PersonaServiceImp;
 
@@ -24,27 +25,27 @@ public class PersonaController {
 	private PersonaServiceImp ps;
 	
 	@GetMapping("/listado")
-	public ResponseEntity<Map<String, Object>> findAllPersonas() {
+	public ResponseEntity<SuccessResponse<List<Persona>>> findAllPersonas() {
 		return ps.findAllPersonas();
 	}
 	
 	@GetMapping("/buscar/{id}")
-	public ResponseEntity<Map<String, Object>> findByIdPersona(@PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<Persona>> findByIdPersona(@PathVariable Integer id) {
 		return ps.findByIdPersona(id);
 	}
 	
 	@PostMapping("/crear")
-	public ResponseEntity<Map<String, Object>> savePersona(@RequestBody Persona p) {
+	public ResponseEntity<SuccessResponse<Persona>> savePersona(@RequestBody Persona p) {
 		return ps.savePersona(p);
 	}
 	
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<Map<String, Object>> updatePersona(@RequestBody Persona p, @PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<Persona>> updatePersona(@RequestBody Persona p, @PathVariable Integer id) {
 		return ps.updatePersona(p, id);
 	}
 	
 	@DeleteMapping("/eliminar/{id}")
-	public ResponseEntity<Map<String, Object>> deleteByIdPersona(@PathVariable Integer id) {
+	public ResponseEntity<SuccessResponse<String>> deleteByIdPersona(@PathVariable Integer id) {
 		return ps.deleteByIdPersona(id);
 	}
 

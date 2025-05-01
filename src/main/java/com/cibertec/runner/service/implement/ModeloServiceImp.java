@@ -1,12 +1,7 @@
 package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Modelo;
 import com.cibertec.runner.repository.IModeloRepository;
 import com.cibertec.runner.service.ModeloService;
@@ -25,116 +21,101 @@ public class ModeloServiceImp implements ModeloService{
 	@Autowired
 	private IModeloRepository dao;
 	
-	@Override
-	public ResponseEntity<Map<String, Object>> findAllModelos(){
-		Map<String, Object> respuesta = new HashMap<>();
-		List<Modelo> modelos = dao.findAll();
-		
-		if (!modelos.isEmpty()) {
-			respuesta.put("mensaje", "Lista de Modelos");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("Modelos", modelos);
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			respuesta.put("mensaje", "No existen Registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-		
-	}
-	
-	@Override
-	public ResponseEntity<Map<String, Object>> saveModelo(ModeloDTO modeloDTO){
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		String fechaActual = LocalDateTime.now().format(formatter);
-		
-			Modelo modelo = new Modelo();
 
-	        modelo.setDescripcion(modeloDTO.getDescripcion());
-	        modelo.setInfo(modeloDTO.getInfo());
-	        modelo.setEstado(modeloDTO.getEstado());
-	        modelo.setPrecio(modeloDTO.getPrecio());
-	        modelo.setIdCtg(modeloDTO.getIdCtg());
-	        modelo.setIdMrc(modeloDTO.getIdMrc());
-	        modelo.setIdPrn(modeloDTO.getIdPrn());
-	        modelo.setIdMtl(modeloDTO.getIdMtl());
-	        
-	        Modelo modeloGuardado = dao.save(modelo);
-	        
-	        respuesta.put("mensaje", "Modelo registrado con éxito");
-	        respuesta.put("fecha", fechaActual);
-	        respuesta.put("status", HttpStatus.CREATED);
-	        respuesta.put("modelo", modeloGuardado);
-	        
-	        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		
-	}
-	
-	@Override
-	public ResponseEntity<Map<String, Object>> updateModelo(ModeloDTO modeloDTO, Long id){
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-	    String fechaActual = LocalDateTime.now().format(formatter);
-	    
-	    Optional<Modelo> modEncontrada = dao.findById(id);
-	    
-	    if (modEncontrada.isPresent()) {
-	        Modelo modelo = modEncontrada.get();
+    @Override
+    public ResponseEntity<SuccessResponse<List<Modelo>>> findAllModelos() {
+        List<Modelo> modelos = dao.findAll();
 
-	        modelo.setDescripcion(modeloDTO.getDescripcion());
-	        modelo.setInfo(modeloDTO.getInfo());
-	        modelo.setEstado(modeloDTO.getEstado());
-	        modelo.setPrecio(modeloDTO.getPrecio());
-	        modelo.setIdCtg(modeloDTO.getIdCtg());
-	        modelo.setIdMrc(modeloDTO.getIdMrc());
-	        modelo.setIdPrn(modeloDTO.getIdPrn());
-	        modelo.setIdMtl(modeloDTO.getIdMtl());
+        if (!modelos.isEmpty()) {
+            SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(modelos)
+                    .build();
 
-	        Modelo modeloActualizado = dao.save(modelo);
+            return ResponseEntity.status(HttpStatus.OK).body(success);
+        } else {
+            throw new RuntimeException("No existen Registros");
+        }
+    }
 
-	        respuesta.put("mensaje", "Modelo actualizado con éxito");
-	        respuesta.put("fecha", fechaActual);
-	        respuesta.put("status", HttpStatus.OK);
-	        respuesta.put("modelo", modeloActualizado);
+    @Override
+    public ResponseEntity<SuccessResponse<Modelo>> saveModelo(ModeloDTO modeloDTO) {
+    	
+        Modelo modelo = new Modelo();
+        modelo.setDescripcion(modeloDTO.getDescripcion());
+        modelo.setInfo(modeloDTO.getInfo());
+        modelo.setEstado(modeloDTO.getEstado());
+        modelo.setPrecio(modeloDTO.getPrecio());
+        modelo.setIdCtg(modeloDTO.getIdCtg());
+        modelo.setIdMrc(modeloDTO.getIdMrc());
+        modelo.setIdPrn(modeloDTO.getIdPrn());
+        modelo.setIdMtl(modeloDTO.getIdMtl());
 
-	        return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-	    } else {
-	        respuesta.put("mensaje", "Modelo no encontrado");
-	        respuesta.put("fecha", fechaActual);
-	        respuesta.put("status", HttpStatus.NOT_FOUND);
+        Modelo modeloGuardado = dao.save(modelo);
 
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-	    }
-	}
-	
-	@Override
-	public ResponseEntity<Map<String, Object>> deleteByIdModelo(Long id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		String fechaActual = LocalDateTime.now().format(formatter);
-		Optional<Modelo> modEncontrado = dao.findById(id);
-		
-		if(modEncontrado.isPresent()) {
-			Modelo mod = modEncontrado.get();
-			mod.setEstado(false);
-			dao.save(mod);
-			respuesta.put("mensaje", "Mascota eliminado correctamente");
-			respuesta.put("fecha", fechaActual);
-			respuesta.put("status", HttpStatus.NO_CONTENT);
-			
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(respuesta);
-		}else {
-			respuesta.put("mensaje", "Sin registros para el ID: " + id);
-			respuesta.put("fecha", fechaActual);
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-		 
-	}
-	
-	
+        SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CREATED.value())
+                .success(HttpStatus.CREATED.getReasonPhrase())
+                .response(modeloGuardado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Long id) {
+
+        Optional<Modelo> modEncontrada = dao.findById(id);
+
+        if (modEncontrada.isPresent()) {
+            Modelo modelo = modEncontrada.get();
+
+            modelo.setDescripcion(modeloDTO.getDescripcion());
+            modelo.setInfo(modeloDTO.getInfo());
+            modelo.setEstado(modeloDTO.getEstado());
+            modelo.setPrecio(modeloDTO.getPrecio());
+            modelo.setIdCtg(modeloDTO.getIdCtg());
+            modelo.setIdMrc(modeloDTO.getIdMrc());
+            modelo.setIdPrn(modeloDTO.getIdPrn());
+            modelo.setIdMtl(modeloDTO.getIdMtl());
+
+            Modelo modeloActualizado = dao.save(modelo);
+
+            SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(modeloActualizado)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(success);
+        } else {
+            throw new RuntimeException("Modelo no encontrado");
+        }
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Long id) {
+        Optional<Modelo> modEncontrado = dao.findById(id);
+
+        if (modEncontrado.isPresent()) {
+            Modelo mod = modEncontrado.get();
+            mod.setEstado(false);
+            dao.save(mod);
+
+            SuccessResponse<String> success = SuccessResponse.<String>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.NO_CONTENT.value())
+                    .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+                    .response("Modelo eliminado correctamente")
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
+        } else {
+            throw new RuntimeException("Sin registros para el ID: " + id);
+        }
+    }
 }

@@ -75,6 +75,7 @@ public class AccountServiceImp implements AccountService{
 		} else {
 			throw new RuntimeException("No se encontro un distrito");
 		}
+		userRepository.save(user);
 	}
 
 	@Override

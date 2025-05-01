@@ -1,7 +1,6 @@
 package com.cibertec.runner.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Transaccion;
 import com.cibertec.runner.model.TransaccionId;
 import com.cibertec.runner.service.TransaccionService;
@@ -36,7 +36,7 @@ public class TransaccionController {
     }
     
     @DeleteMapping("/deleteTr")
-    public ResponseEntity<Map<String, Object>> deleteByIdTransaccion(@RequestBody TransaccionId id) {
+    public ResponseEntity<SuccessResponse<String>> deleteByIdTransaccion(@RequestBody TransaccionId id) {
     	System.out.println("Entrando DeleteMapping");
         return transaccionService.deleteByIdTransaccion(id);
     }

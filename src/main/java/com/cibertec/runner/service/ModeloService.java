@@ -1,19 +1,21 @@
 package com.cibertec.runner.service;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.SuccessResponse;
+import com.cibertec.runner.model.Modelo;
 
 public interface ModeloService {
 	
-	public ResponseEntity<Map<String, Object>> findAllModelos();
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findAllModelos();
 	
-	public ResponseEntity<Map<String, Object>> saveModelo(ModeloDTO modeloDTO);
+	public ResponseEntity<SuccessResponse<Modelo>> saveModelo(ModeloDTO modeloDTO);
 	
-	public ResponseEntity<Map<String, Object>> updateModelo(ModeloDTO modeloDTO, Long id);
+	public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Long id);
 	
-	public ResponseEntity<Map<String, Object>> deleteByIdModelo(Long id);
+	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Long id);
 
 }
