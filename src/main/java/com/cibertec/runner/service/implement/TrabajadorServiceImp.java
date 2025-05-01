@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.request.TrabajadorDTO;
 import com.cibertec.runner.model.Trabajador;
+import com.cibertec.runner.model.Usuario;
 import com.cibertec.runner.repository.ITrabajadorRepository;
+import com.cibertec.runner.repository.IUsuarioRepository;
 import com.cibertec.runner.service.TrabajadorService;
 
 @Service
@@ -20,15 +23,24 @@ public class TrabajadorServiceImp implements TrabajadorService {
     @Autowired
     private ITrabajadorRepository trabajadorRepo;
 
+    @Autowired
+    private IUsuarioRepository usuarioRepo;
+
     /// Registrar
     @Override
-    public Map<String, Object> registrar(Trabajador trabajador) {
+    public Map<String, Object> registrar(TrabajadorDTO trabajador) {
         Map<String, Object> respuesta = new HashMap<>();
         try {
-        	
-            trabajador.setEstado("A");
+            Usuario usu = usuarioRepo.save(trabajador.getUsuario());
             
-            Trabajador guardado = trabajadorRepo.save(trabajador);
+            Trabajador t = new Trabajador();
+            t.setId(usu.getId());
+            t.setEstado("A");
+            t.setHorasLaborales(trabajador.getHorasLaborales());
+            t.setSalario(trabajador.getSalario());
+            
+            Trabajador guardado = trabajadorRepo.save(t);
+            
             respuesta.put("mensaje", "Trabajador registrado correctamente");
             respuesta.put("fecha", new Date());
             respuesta.put("status", HttpStatus.CREATED);
@@ -41,30 +53,6 @@ public class TrabajadorServiceImp implements TrabajadorService {
         return respuesta;
     }
 
-    /// Actualizar
-    @Override
-    public Map<String, Object> actualizar(Trabajador trabajador) {
-        Map<String, Object> respuesta = new HashMap<>();
-        try {
-            Optional<Trabajador> existe = trabajadorRepo.findById(trabajador.getId());
-            if (existe.isPresent()) {
-                Trabajador actualizado = trabajadorRepo.save(trabajador);
-                respuesta.put("mensaje", "Trabajador actualizado correctamente");
-                respuesta.put("fecha", new Date());
-                respuesta.put("status", HttpStatus.OK);
-                respuesta.put("trabajador", actualizado);
-            } else {
-                respuesta.put("mensaje", "Trabajador no encontrado");
-                respuesta.put("fecha", new Date());
-                respuesta.put("status", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            respuesta.put("mensaje", "Error al actualizar trabajador: " + e.getMessage());
-            respuesta.put("fecha", new Date());
-            respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return respuesta;
-    }
 
     /// Eliminación lógica
     @Override

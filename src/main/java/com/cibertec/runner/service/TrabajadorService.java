@@ -2,15 +2,13 @@ package com.cibertec.runner.service;
 
 import java.util.Map;
 
-import com.cibertec.runner.model.Trabajador;
+import com.cibertec.runner.dto.request.TrabajadorDTO;
 
 public interface TrabajadorService {
 
     /// Registrar
-    Map<String, Object> registrar(Trabajador trabajador);
+    Map<String, Object> registrar(TrabajadorDTO trabajador);
 
-    /// Actualizar
-    Map<String, Object> actualizar(Trabajador trabajador);
 
     /// Eliminador Lógico
     Map<String, Object> eliminarLogico(Integer id);

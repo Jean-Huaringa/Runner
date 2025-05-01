@@ -3,14 +3,19 @@ package com.cibertec.runner.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.cibertec.runner.model.Trabajador;
+import com.cibertec.runner.dto.request.TrabajadorDTO;
 import com.cibertec.runner.service.TrabajadorService;
 
 @RestController
-@RequestMapping("/trabajador")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/trabajador")
 public class TrabajadorController {
 
     @Autowired
@@ -40,14 +45,8 @@ public class TrabajadorController {
 
     // Registrar
     @PostMapping
-    public Map<String, Object> registrar(@RequestBody Trabajador trabajador) {
+    public Map<String, Object> registrar(@RequestBody TrabajadorDTO trabajador) {
         return trabajadorService.registrar(trabajador);
-    }
-
-    // Actualizar
-    @PutMapping
-    public Map<String, Object> actualizar(@RequestBody Trabajador trabajador) {
-        return trabajadorService.actualizar(trabajador);
     }
 
     // Eliminador lógico
