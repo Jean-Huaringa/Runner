@@ -135,4 +135,22 @@ public class ModeloServiceImp implements ModeloService{
 			throw new RuntimeException("Problema al buscar el modelo");
 		}
 	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByIdMrc(Integer id) {
+		List<Modelo> modelos = dao.findByIdMrc(id);
+
+        if (!modelos.isEmpty()) {
+            SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(modelos)
+                    .build();
+
+            return ResponseEntity.ok(success);
+        } else {
+            throw new RuntimeException("No se encontraron modelos para la marca con ID: " + id);
+        }
+	}
 }

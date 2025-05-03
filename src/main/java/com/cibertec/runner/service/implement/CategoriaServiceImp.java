@@ -59,7 +59,9 @@ public class CategoriaServiceImp implements CategoriaService {
 	public ResponseEntity<SuccessResponse<Categoria>> saveCategoria(Categoria c) {
 
 		try {
-			Categoria cate = dao.save(c);
+			Categoria categoria = new Categoria();
+			categoria.setNombre(c.getNombre());
+			Categoria cate = dao.save(categoria);
 			SuccessResponse<Categoria> success = SuccessResponse.<Categoria>builder()
 			        .timestamp(LocalDateTime.now())
 			        .status(HttpStatus.CREATED.value())

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class ColorServiceImp implements ColorService {
 	@Override
 	public ResponseEntity<SuccessResponse<List<Color>>> findAllColor() {
 
-		List<Color> colores = colRepo.findAll(Sort.by("id").ascending());
+		List<Color> colores = colRepo.findAll();
 
 		if (!colores.isEmpty()) {
 
@@ -64,7 +63,11 @@ public class ColorServiceImp implements ColorService {
 	@Override
 	public ResponseEntity<SuccessResponse<Color>> saveColor(Color color){
 
-		Color col = colRepo.save(color);
+		Color c = new Color();
+		
+		c.setNombre(color.getNombre());
+		
+		Color col = colRepo.save(c);
 
 		SuccessResponse<Color> success = SuccessResponse.<Color>builder()
 		        .timestamp(LocalDateTime.now())

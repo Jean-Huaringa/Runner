@@ -64,7 +64,9 @@ public class TallaServiceImp implements TallaService{
             throw new RuntimeException("La talla ya existe");
         }
 
-        Talla tallaGuardada = talRepo.save(talla);
+        Talla newTalla = new Talla();
+        newTalla.setNombre(talla.getNombre());
+        Talla tallaGuardada = talRepo.save(newTalla);
 
         SuccessResponse<Talla> success = SuccessResponse.<Talla>builder()
                 .timestamp(LocalDateTime.now())

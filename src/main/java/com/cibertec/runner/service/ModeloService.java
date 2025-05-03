@@ -20,4 +20,6 @@ public interface ModeloService {
 	
 	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Integer id);
 
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByIdMrc(Integer id);
+
 }

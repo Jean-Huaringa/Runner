@@ -123,4 +123,22 @@ public class ProductoServiceImp implements ProductoService {
             throw new RuntimeException("No se realizó la eliminación, Producto no encontrado");
         }
     }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<Producto>>> findByIdMdl(Integer idMdl) {
+        List<Producto> productos = prorepo.findByIdMdl(idMdl);
+
+        if (!productos.isEmpty()) {
+            SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(productos)
+                    .build();
+
+            return ResponseEntity.ok(success);
+        } else {
+            throw new RuntimeException("No se encontraron productos para el modelo con ID: " + idMdl);
+        }
+    }
 }

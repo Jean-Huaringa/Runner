@@ -11,5 +11,5 @@ import com.cibertec.runner.model.Modelo;
 public interface IModeloRepository extends JpaRepository<Modelo, Integer>{
 	
 	List<Modelo> findAllByEstado(Boolean estado);
-	
+	List<Modelo> findByIdMrc(Integer idMrc);
 }

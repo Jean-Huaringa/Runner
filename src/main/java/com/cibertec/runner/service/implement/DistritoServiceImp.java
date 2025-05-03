@@ -61,7 +61,10 @@ public class DistritoServiceImp implements DistritoService {
             throw new RuntimeException("El distrito ya existe");
         }
 
-        Distrito savedDistrito = repository.save(distrito);
+        Distrito dis = new Distrito();
+		dis.setNombre(distrito.getNombre());
+		
+        Distrito savedDistrito = repository.save(dis);
 
         SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
             .timestamp(LocalDateTime.now())

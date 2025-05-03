@@ -49,4 +49,9 @@ public class ModeloController {
 	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(@PathVariable Integer id) {
 	    return modeloService.deleteByIdModelo(id);
 	}
+	
+	@GetMapping("/marca/{idMrc}")
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByIdMrc(@PathVariable Integer idMrc) {
+	    return modeloService.findByIdMrc(idMrc);
+	}
 }

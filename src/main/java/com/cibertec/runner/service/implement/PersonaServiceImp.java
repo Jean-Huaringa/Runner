@@ -57,7 +57,10 @@ public class PersonaServiceImp implements PersonaService{
 
     @Override
     public ResponseEntity<SuccessResponse<Persona>> savePersona(Persona p) {
-        Persona personaGuardada = dao.save(p);
+
+        Persona newPersona = new Persona();
+        newPersona.setNombre(p.getNombre());
+        Persona personaGuardada = dao.save(newPersona);
 
         SuccessResponse<Persona> success = SuccessResponse.<Persona>builder()
                 .timestamp(LocalDateTime.now())

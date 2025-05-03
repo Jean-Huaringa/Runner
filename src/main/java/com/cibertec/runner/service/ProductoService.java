@@ -25,4 +25,5 @@ public interface ProductoService {
 	// Eliminar de manera permanente
 	public ResponseEntity<SuccessResponse<String>> deleteByIdProducto(Integer id);
 
+	public ResponseEntity<SuccessResponse<List<Producto>>> findByIdMdl(Integer id);
 }

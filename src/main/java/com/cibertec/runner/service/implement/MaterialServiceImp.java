@@ -57,7 +57,9 @@ public class MaterialServiceImp implements MaterialService{
 
     @Override
     public ResponseEntity<SuccessResponse<Material>> saveMaterial(Material m) {
-        Material nuevoMaterial = materialRepo.save(m);
+    	Material mat = new Material();
+    	mat.setNombre(m.getNombre());
+        Material nuevoMaterial = materialRepo.save(mat);
 
         SuccessResponse<Material> success = SuccessResponse.<Material>builder()
                 .timestamp(LocalDateTime.now())

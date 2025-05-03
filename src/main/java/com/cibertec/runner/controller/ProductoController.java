@@ -50,7 +50,10 @@ public class ProductoController {
 	public ResponseEntity<SuccessResponse<String>> deleteByIdProducto(@PathVariable Integer id) {
 	    return psimpl.deleteByIdProducto(id);
 	}
+	
+	@GetMapping("/modelo/{idMdl}")
+	public ResponseEntity<SuccessResponse<List<Producto>>> findByIdMdl(@PathVariable Integer idMdl) {
+	    return psimpl.findByIdMdl(idMdl);
+	}
 
-	
-	
 }

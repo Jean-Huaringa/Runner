@@ -60,7 +60,9 @@ public class MarcaServiceImp implements MarcaService {
     @Override
     public ResponseEntity<SuccessResponse<Marca>> saveMarca(Marca marca) {
 
-        Marca nuevaMarca = marcaRepo.save(marca);
+    	Marca mar = new Marca();
+		mar.setNombre(marca.getNombre());
+        Marca nuevaMarca = marcaRepo.save(mar);
 
         SuccessResponse<Marca> success = SuccessResponse.<Marca>builder()
                 .timestamp(LocalDateTime.now())
