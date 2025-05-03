@@ -22,7 +22,7 @@ public class ColorController {
 	@Autowired
 	private ColorServiceImp colSer;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Color>>> findAllListColor(){
 		return colSer.findAllColor();
 	}
@@ -32,7 +32,7 @@ public class ColorController {
 		return colSer.findByIdColor(id);
 	}
 	
-    @PostMapping("/registrar")
+    @PostMapping
     public ResponseEntity<SuccessResponse<Color>> saveColor(@RequestBody Color color) {
         return colSer.saveColor(color);
     }

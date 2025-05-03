@@ -30,18 +30,23 @@ public class ModeloController {
 		return modeloService.findAllModelos();
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<SuccessResponse<Modelo>> findByIdModelos(@PathVariable Integer id){
+		return modeloService.findByIdModel(id);
+	}
+	
 	@PostMapping
     public ResponseEntity<SuccessResponse<Modelo>> saveModelo(@RequestBody ModeloDTO modeloDTO) {
         return modeloService.saveModelo(modeloDTO);
     }
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(@RequestBody ModeloDTO modeloDTO, @PathVariable Long id) {
+    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(@RequestBody ModeloDTO modeloDTO, @PathVariable Integer id) {
         return modeloService.updateModelo(modeloDTO, id);
     }
 	
-	@DeleteMapping("/logico/{id}")
-	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(@PathVariable Long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(@PathVariable Integer id) {
 	    return modeloService.deleteByIdModelo(id);
 	}
 }

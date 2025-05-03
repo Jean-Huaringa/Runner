@@ -23,19 +23,17 @@ public class TransaccionController {
 	@Autowired
     private TransaccionService transaccionService;
 
-    // Listar todas
     @GetMapping
     public ResponseEntity<List<Transaccion>> findAllListTransaccion() {
         return ResponseEntity.ok(transaccionService.findAllListTransaccion());
     }
 
-    // Registrar
     @PostMapping
     public ResponseEntity<Transaccion> saveTransaccion(@RequestBody Transaccion transaccion) {
         return ResponseEntity.ok(transaccionService.saveTransaccion(transaccion));
     }
     
-    @DeleteMapping("/deleteTr")
+    @DeleteMapping("/delete")
     public ResponseEntity<SuccessResponse<String>> deleteByIdTransaccion(@RequestBody TransaccionId id) {
     	System.out.println("Entrando DeleteMapping");
         return transaccionService.deleteByIdTransaccion(id);

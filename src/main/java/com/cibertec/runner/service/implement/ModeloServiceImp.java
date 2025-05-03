@@ -46,7 +46,7 @@ public class ModeloServiceImp implements ModeloService{
         Modelo modelo = new Modelo();
         modelo.setDescripcion(modeloDTO.getDescripcion());
         modelo.setInfo(modeloDTO.getInfo());
-        modelo.setEstado(modeloDTO.getEstado());
+        modelo.setEstado(true);
         modelo.setPrecio(modeloDTO.getPrecio());
         modelo.setIdCtg(modeloDTO.getIdCtg());
         modelo.setIdMrc(modeloDTO.getIdMrc());
@@ -66,7 +66,7 @@ public class ModeloServiceImp implements ModeloService{
     }
 
     @Override
-    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Long id) {
+    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Integer id) {
 
         Optional<Modelo> modEncontrada = dao.findById(id);
 
@@ -75,7 +75,7 @@ public class ModeloServiceImp implements ModeloService{
 
             modelo.setDescripcion(modeloDTO.getDescripcion());
             modelo.setInfo(modeloDTO.getInfo());
-            modelo.setEstado(modeloDTO.getEstado());
+            modelo.setEstado(true);
             modelo.setPrecio(modeloDTO.getPrecio());
             modelo.setIdCtg(modeloDTO.getIdCtg());
             modelo.setIdMrc(modeloDTO.getIdMrc());
@@ -98,7 +98,7 @@ public class ModeloServiceImp implements ModeloService{
     }
 
     @Override
-    public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Long id) {
+    public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Integer id) {
         Optional<Modelo> modEncontrado = dao.findById(id);
 
         if (modEncontrado.isPresent()) {
@@ -118,4 +118,21 @@ public class ModeloServiceImp implements ModeloService{
             throw new RuntimeException("Sin registros para el ID: " + id);
         }
     }
+
+	@Override
+	public ResponseEntity<SuccessResponse<Modelo>> findByIdModel(Integer id) {
+		Modelo modEncontrado = dao.findById(id).orElse(null);
+		if (modEncontrado != null) {
+			SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
+			        .timestamp(LocalDateTime.now())
+			        .status(HttpStatus.OK.value())
+			        .success(HttpStatus.OK.getReasonPhrase())
+			        .response(modEncontrado)
+			        .build();
+			
+			return ResponseEntity.status(HttpStatus.OK).body(success);
+		} else {
+			throw new RuntimeException("Problema al buscar el modelo");
+		}
+	}
 }

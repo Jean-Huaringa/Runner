@@ -25,7 +25,7 @@ public class TicketController {
 	@Autowired
 	private TicketServiceImp tks;
 
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Ticket>>> findAllTickets() {
 		return tks.findAllTickets();
 	}
@@ -37,7 +37,7 @@ public class TicketController {
 	}
 
 	// Registrar
-	@PostMapping("/registrar")
+	@PostMapping
 	public ResponseEntity<SuccessResponse<Ticket>> saveTicket(@RequestBody TicketDTO ticketDTO) {
 		return tks.saveTicket(ticketDTO);
 	}

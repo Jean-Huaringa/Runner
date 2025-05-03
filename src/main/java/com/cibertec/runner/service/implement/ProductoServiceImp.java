@@ -61,7 +61,6 @@ public class ProductoServiceImp implements ProductoService {
     @Override
     public ResponseEntity<SuccessResponse<Producto>> saveProducto(ProductoDTO productoDTO) {
         Producto producto = new Producto();
-        producto.setId(productoDTO.getId());
         producto.setStock(productoDTO.getStock());
         producto.setIdClr(productoDTO.getIdClr());
         producto.setIdTll(productoDTO.getIdTll());

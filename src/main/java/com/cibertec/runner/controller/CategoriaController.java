@@ -24,28 +24,28 @@ public class CategoriaController {
 	@Autowired
 	private CategoriaServiceImp cs;
 
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Categoria>>> findAllListCategoria() {
 		return cs.findAllListCategoria();
 	}
 
-	@GetMapping("/buscar/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Categoria>> findByIdCategoria(@PathVariable Integer id) {
 		return cs.findByIdCategoria(id);
 	}
 
-	@PostMapping("/crear")
+	@PostMapping
 	public ResponseEntity<SuccessResponse<Categoria>> saveCategoria(@RequestBody Categoria c) {
 		return cs.saveCategoria(c);
 	}
 
-	@PutMapping("/actualizar/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Categoria>> updateCategoria(@RequestBody Categoria c,
 			@PathVariable Integer id) {
 		return cs.updateCategoria(c, id);
 	}
 
-	@DeleteMapping("/eliminar/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<SuccessResponse<String>> deleteByIdCategoria(@PathVariable Integer id) {
 		return cs.deleteByIdCategoria(id);
 	}

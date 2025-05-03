@@ -24,27 +24,27 @@ public class MaterialController {
 	@Autowired
 	private MaterialServiceImp ms;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Material>>> findAllMateriales() {
 		return ms.findAllMateriales();
 	}
 	
-	@GetMapping("/buscar/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Material>> findByIdMateriales(@PathVariable Integer id) {
 		return ms.findByIdMateriales(id);
 	}
 	
-	@PostMapping("/crear")
+	@PostMapping
 	public ResponseEntity<SuccessResponse<Material>> saveMaterial(@RequestBody Material m) {
 		return ms.saveMaterial(m);
 	}
 	
-	@PutMapping("/actualizar/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Material>> updateMaterial(@RequestBody Material m, @PathVariable Integer id) {
 		return ms.updateMaterial(m, id);
 	}
 	
-	@DeleteMapping("/eliminar/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<SuccessResponse<String>> deleteByIdMaterial(@PathVariable Integer id) {
 		return ms.deleteByIdMaterial(id);
 	}

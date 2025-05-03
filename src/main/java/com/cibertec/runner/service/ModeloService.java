@@ -11,11 +11,13 @@ import com.cibertec.runner.model.Modelo;
 public interface ModeloService {
 	
 	public ResponseEntity<SuccessResponse<List<Modelo>>> findAllModelos();
+
+	public ResponseEntity<SuccessResponse<Modelo>> findByIdModel(Integer id);
 	
 	public ResponseEntity<SuccessResponse<Modelo>> saveModelo(ModeloDTO modeloDTO);
 	
-	public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Long id);
+	public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Integer id);
 	
-	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Long id);
+	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Integer id);
 
 }

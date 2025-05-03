@@ -25,27 +25,27 @@ public class MarcaController {
 	@Autowired
 	private MarcaServiceImp ms;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Marca>>> findAllListMarcas() {
 		return ms.findAllListMarcas();
 	}
 	
-	@GetMapping("/buscar/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Marca>> findByIdMarca(@PathVariable Integer id) {
 		return ms.findByIdMarca(id);
 	}
 	
-	@PostMapping("/crear")
+	@PostMapping
 	public ResponseEntity<SuccessResponse<Marca>> saveMarca(@RequestBody Marca m) {
 		return ms.saveMarca(m);
 	}
 	
-	@PutMapping("/actualizar/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Marca>> updateMarca(@RequestBody Marca m, @PathVariable Integer id) {
 		return ms.updateMarca(m, id);
 	}
 	
-	@DeleteMapping("/eliminar/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<SuccessResponse<String>> deleteByIdMarca(@PathVariable Integer id) {
 		return ms.deleteByIdMarca(id);
 	}

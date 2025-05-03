@@ -26,7 +26,7 @@ public class ProductoController {
 	@Autowired
 	private ProductoServiceImp psimpl;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Producto>>> findAllProductos(){
 		return psimpl.findAllProductos();
 	}

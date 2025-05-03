@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.runner.model.Modelo;
 
 @Repository
-public interface IModeloRepository extends JpaRepository<Modelo, Long>{
+public interface IModeloRepository extends JpaRepository<Modelo, Integer>{
 	
 	List<Modelo> findAllByEstado(Boolean estado);
 	

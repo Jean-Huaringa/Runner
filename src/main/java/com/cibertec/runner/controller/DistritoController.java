@@ -21,7 +21,7 @@ public class DistritoController {
 	@Autowired
 	private DistritoServiceImp disSer;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Distrito>>> findAllDistrito(){
 		return disSer.findAllDistrito();
 	}
@@ -31,7 +31,7 @@ public class DistritoController {
 		return disSer.findByIdDistrito(id);
 	}
 	
-    @PostMapping("/registrar")
+    @PostMapping
     public ResponseEntity<SuccessResponse<Distrito>> saveDistrito(@RequestBody Distrito distrito) {
         return disSer.saveDistrito(distrito);
     }

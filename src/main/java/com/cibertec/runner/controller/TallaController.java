@@ -22,7 +22,7 @@ public class TallaController {
 	@Autowired
 	private TallaServiceImp talRepo;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Talla>>> findAllTalla(){
 		return talRepo.findAllTalla();
 	}
@@ -34,7 +34,7 @@ public class TallaController {
 	}
 	
 	  // Registrar
-    @PostMapping("/registrar")
+    @PostMapping
     public ResponseEntity<SuccessResponse<Talla>> saveTalla(@RequestBody Talla talla) {
         return talRepo.saveTalla(talla);
     }

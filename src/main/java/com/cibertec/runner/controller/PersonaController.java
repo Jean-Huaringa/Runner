@@ -24,27 +24,27 @@ public class PersonaController {
 	@Autowired
 	private PersonaServiceImp ps;
 	
-	@GetMapping("/listado")
+	@GetMapping
 	public ResponseEntity<SuccessResponse<List<Persona>>> findAllPersonas() {
 		return ps.findAllPersonas();
 	}
 	
-	@GetMapping("/buscar/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Persona>> findByIdPersona(@PathVariable Integer id) {
 		return ps.findByIdPersona(id);
 	}
 	
-	@PostMapping("/crear")
+	@PostMapping
 	public ResponseEntity<SuccessResponse<Persona>> savePersona(@RequestBody Persona p) {
 		return ps.savePersona(p);
 	}
 	
-	@PutMapping("/actualizar/{id}")
+	@PutMapping("/{id}")
 	public ResponseEntity<SuccessResponse<Persona>> updatePersona(@RequestBody Persona p, @PathVariable Integer id) {
 		return ps.updatePersona(p, id);
 	}
 	
-	@DeleteMapping("/eliminar/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<SuccessResponse<String>> deleteByIdPersona(@PathVariable Integer id) {
 		return ps.deleteByIdPersona(id);
 	}
