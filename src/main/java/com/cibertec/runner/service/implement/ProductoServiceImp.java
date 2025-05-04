@@ -3,12 +3,14 @@ package com.cibertec.runner.service.implement;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.request.FiltroProductoDTO;
 import com.cibertec.runner.dto.request.ProductoDTO;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Producto;
@@ -141,4 +143,34 @@ public class ProductoServiceImp implements ProductoService {
             throw new RuntimeException("No se encontraron productos para el modelo con ID: " + idMdl);
         }
     }
+    
+    public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(FiltroProductoDTO id) {
+        List<Producto> productos = prorepo.findAll();
+        
+        List<Producto> pr =  productos.stream()
+                .filter(p ->  
+                (id.getIdClr() == 0 || id.getIdClr().equals(p.getIdClr()))
+                && (id.getIdTll() == 0 || id.getIdTll().equals(p.getIdTll()))
+                && (id.getIdCtg() == 0 || id.getIdCtg().equals(p.getModelo().getIdCtg()))
+                && (id.getIdMrc() == 0 || id.getIdMrc().equals(p.getModelo().getIdMrc()))
+                && (id.getIdPrn() == 0 || id.getIdPrn().equals(p.getModelo().getIdPrn()))
+                && (id.getIdMtl() == 0 || id.getIdMtl().equals(p.getModelo().getIdMtl()))
+                )
+                .collect(Collectors.toList());
+
+        if (!productos.isEmpty()) {
+            SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(pr)
+                    .build();
+
+            return ResponseEntity.ok(success);
+        } else {
+            throw new RuntimeException("No se encontraron productos para el modelo con ID: " + id.toString());
+        }
+    }
+
+
 }

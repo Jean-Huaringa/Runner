@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibertec.runner.dto.request.FiltroProductoDTO;
 import com.cibertec.runner.dto.request.ProductoDTO;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Producto;
@@ -54,6 +55,11 @@ public class ProductoController {
 	@GetMapping("/modelo/{idMdl}")
 	public ResponseEntity<SuccessResponse<List<Producto>>> findByIdMdl(@PathVariable Integer idMdl) {
 	    return psimpl.findByIdMdl(idMdl);
+	}
+	
+	@PostMapping("/filtros")
+	public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(@RequestBody FiltroProductoDTO idMdl) {
+	    return psimpl.findByAttributes(idMdl);
 	}
 
 }
