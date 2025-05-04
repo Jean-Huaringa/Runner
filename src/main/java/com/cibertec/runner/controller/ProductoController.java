@@ -58,8 +58,8 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/filtros")
-	public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(@RequestBody FiltroProductoDTO idMdl) {
-	    return psimpl.findByAttributes(idMdl);
+	public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(@RequestBody FiltroProductoDTO filtro) {
+	    return psimpl.findByAttributes(filtro);
 	}
 
 }

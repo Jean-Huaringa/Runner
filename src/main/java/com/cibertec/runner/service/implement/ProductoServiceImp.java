@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cibertec.runner.dto.request.FiltroProductoDTO;
 import com.cibertec.runner.dto.request.ProductoDTO;
@@ -143,34 +144,47 @@ public class ProductoServiceImp implements ProductoService {
             throw new RuntimeException("No se encontraron productos para el modelo con ID: " + idMdl);
         }
     }
-    
-    public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(FiltroProductoDTO id) {
-        List<Producto> productos = prorepo.findAll();
+
+    @Transactional
+    public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(FiltroProductoDTO filtro) {
+
+        String idClrCsv = listToCsv(filtro.getIdClr());
+        String idTllCsv = listToCsv(filtro.getIdTll());
+        String idCtgCsv = listToCsv(filtro.getIdCtg());
+        String idMrcCsv = listToCsv(filtro.getIdMrc());
+        String idPrnCsv = listToCsv(filtro.getIdPrn());
+        String idMtlCsv = listToCsv(filtro.getIdMtl());
         
-        List<Producto> pr =  productos.stream()
-                .filter(p ->  
-                (id.getIdClr() == 0 || id.getIdClr().equals(p.getIdClr()))
-                && (id.getIdTll() == 0 || id.getIdTll().equals(p.getIdTll()))
-                && (id.getIdCtg() == 0 || id.getIdCtg().equals(p.getModelo().getIdCtg()))
-                && (id.getIdMrc() == 0 || id.getIdMrc().equals(p.getModelo().getIdMrc()))
-                && (id.getIdPrn() == 0 || id.getIdPrn().equals(p.getModelo().getIdPrn()))
-                && (id.getIdMtl() == 0 || id.getIdMtl().equals(p.getModelo().getIdMtl()))
-                )
-                .collect(Collectors.toList());
+        System.out.println(filtro.getIdClr().toString());
+
+        List<Producto> productos = prorepo.filtrarProductos(
+            idClrCsv, 
+            idTllCsv, 
+            idCtgCsv, 
+            idMrcCsv, 
+            idPrnCsv, 
+            idMtlCsv
+        );;
+        
 
         if (!productos.isEmpty()) {
             SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
                     .timestamp(LocalDateTime.now())
                     .status(HttpStatus.OK.value())
                     .success(HttpStatus.OK.getReasonPhrase())
-                    .response(pr)
+                    .response(productos)
                     .build();
 
             return ResponseEntity.ok(success);
         } else {
-            throw new RuntimeException("No se encontraron productos para el modelo con ID: " + id.toString());
+            throw new IllegalArgumentException("No se encontraron productos para el modelo con ID: ");
         }
     }
 
+    private String listToCsv(List<Integer> list) {
+        return (list == null || list.isEmpty()) ? null : list.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
 
 }

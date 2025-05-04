@@ -1,13 +1,15 @@
 package com.cibertec.runner.dto.request;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class FiltroProductoDTO {
-    private Integer idClr;
-    private Integer idTll;
-    private Integer idCtg;
-    private Integer idMrc;
-    private Integer idPrn;
-    private Integer idMtl;
+    private List<Integer> idClr;
+    private List<Integer> idTll;
+    private List<Integer> idCtg;
+    private List<Integer> idMrc;
+    private List<Integer> idPrn;
+    private List<Integer> idMtl;
 }
