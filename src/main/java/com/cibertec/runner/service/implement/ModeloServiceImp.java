@@ -3,12 +3,15 @@ package com.cibertec.runner.service.implement;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cibertec.runner.dto.request.FiltradoModeloDTO;
 import com.cibertec.runner.dto.request.ModeloDTO;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Modelo;
@@ -153,4 +156,47 @@ public class ModeloServiceImp implements ModeloService{
             throw new RuntimeException("No se encontraron modelos para la marca con ID: " + id);
         }
 	}
+	
+    @Transactional
+    public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(FiltradoModeloDTO filtro) {
+
+        String idClrCsv = listToCsv(filtro.getIdClr());
+        String idTllCsv = listToCsv(filtro.getIdTll());
+        String idCtgCsv = listToCsv(filtro.getIdCtg());
+        String idMrcCsv = listToCsv(filtro.getIdMrc());
+        String idPrnCsv = listToCsv(filtro.getIdPrn());
+        String idMtlCsv = listToCsv(filtro.getIdMtl());
+        
+        System.out.println(filtro.getIdClr().toString());
+
+        List<Modelo> productos = dao.filtrarModelos(
+            idClrCsv, 
+            idTllCsv, 
+            idCtgCsv, 
+            idMrcCsv, 
+            idPrnCsv, 
+            idMtlCsv
+        );;
+        
+
+        if (!productos.isEmpty()) {
+            SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(productos)
+                    .build();
+
+            return ResponseEntity.ok(success);
+        } else {
+            throw new IllegalArgumentException("No se encontraron modelos para el filtro enviado ");
+        }
+    }
+
+    private String listToCsv(List<Integer> list) {
+        return (list == null || list.isEmpty()) ? null : list.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
+
 }

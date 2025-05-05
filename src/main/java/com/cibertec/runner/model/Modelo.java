@@ -58,4 +58,5 @@ public class Modelo {
 	@ManyToOne
 	@JoinColumn(name = "id_mtl", referencedColumnName = "id_mtl", insertable = false, updatable = false)
     private Material material;
+	
 }

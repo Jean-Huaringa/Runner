@@ -11,6 +11,7 @@ import com.cibertec.runner.model.Producto;
 
 @Repository
 public interface IProductoRepository extends JpaRepository<Producto, Integer>{
+	
 	List<Producto> findByIdMdl(Integer idMdl);
 	
 	@Procedure(procedureName = "filtrar_productos")
