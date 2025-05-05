@@ -2,7 +2,6 @@ package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,8 @@ import com.cibertec.runner.model.Producto;
 import com.cibertec.runner.repository.IProductoRepository;
 import com.cibertec.runner.service.ProductoService;
 
+import jakarta.persistence.NoResultException;
+
 @Service
 
 public class ProductoServiceImp implements ProductoService {
@@ -29,40 +30,41 @@ public class ProductoServiceImp implements ProductoService {
     public ResponseEntity<SuccessResponse<List<Producto>>> findAllProductos() {
         List<Producto> productos = prorepo.findAll();
 
-        if (!productos.isEmpty()) {
-            SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(productos)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("No existen registros");
+        if (productos.isEmpty()) {
+        	throw new NoResultException("No se encontro ningun producto");
         }
+        
+        SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(productos)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<Producto>> findByIdProducto(Integer id) {
-        Optional<Producto> producto = prorepo.findById(id);
+        Producto producto = prorepo.findById(id).orElse(null);
 
-        if (producto.isPresent()) {
-            SuccessResponse<Producto> success = SuccessResponse.<Producto>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(producto.get())
-                    .build();
-
-            return ResponseEntity.ok(success);
-        } else {
-            throw new RuntimeException("No se encuentra un registro para el ID: " + id);
+        if (producto == null) {
+        	throw new NoResultException("No se encontro ningun producto");
         }
+
+        SuccessResponse<Producto> success = SuccessResponse.<Producto>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(producto)
+                .build();
+
+        return ResponseEntity.ok(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<Producto>> saveProducto(ProductoDTO productoDTO) {
+    	
         Producto producto = new Producto();
         producto.setStock(productoDTO.getStock());
         producto.setIdClr(productoDTO.getIdClr());
@@ -83,48 +85,47 @@ public class ProductoServiceImp implements ProductoService {
 
     @Override
     public ResponseEntity<SuccessResponse<Producto>> updateProducto(Producto producto, Integer id) {
-        Optional<Producto> productoExistente = prorepo.findById(id);
+        Producto productoExistente = prorepo.findById(id).orElse(null);
 
-        if (productoExistente.isPresent()) {
-            Producto productoActualizado = productoExistente.get();
-            productoActualizado.setStock(producto.getStock());
-            productoActualizado.setIdClr(producto.getIdClr());
-            productoActualizado.setIdTll(producto.getIdTll());
-            productoActualizado.setIdMdl(producto.getIdMdl());
-
-            Producto productoGuardado = prorepo.save(productoActualizado);
-
-            SuccessResponse<Producto> success = SuccessResponse.<Producto>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(productoGuardado)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("Producto no encontrado");
+        if (productoExistente == null) {
+        	throw new NoResultException("No se encontro el codigo del producto");
         }
+        
+        productoExistente.setStock(producto.getStock());
+        productoExistente.setIdClr(producto.getIdClr());
+        productoExistente.setIdTll(producto.getIdTll());
+        productoExistente.setIdMdl(producto.getIdMdl());
+
+        Producto productoGuardado = prorepo.save(productoExistente);
+
+        SuccessResponse<Producto> success = SuccessResponse.<Producto>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(productoGuardado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<String>> deleteByIdProducto(Integer id) {
-        Optional<Producto> productoExiste = prorepo.findById(id);
+        Producto productoExiste = prorepo.findById(id).orElse(null);
 
-        if (productoExiste.isPresent()) {
-            prorepo.delete(productoExiste.get());
-
-            SuccessResponse<String> success = SuccessResponse.<String>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.NO_CONTENT.value())
-                    .success(HttpStatus.NO_CONTENT.getReasonPhrase())
-                    .response("Producto eliminado correctamente")
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
-        } else {
-            throw new RuntimeException("No se realizó la eliminación, Producto no encontrado");
+        if (productoExiste == null) {
+        	throw new NoResultException("No se encontro el codigo del producto");
         }
+        
+        prorepo.delete(productoExiste);
+
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NO_CONTENT.value())
+                .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+                .response("Producto eliminado correctamente")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
     }
 
     @Override
@@ -146,6 +147,7 @@ public class ProductoServiceImp implements ProductoService {
     }
 
     @Transactional
+    @Override
     public ResponseEntity<SuccessResponse<List<Producto>>> findByAttributes(FiltroProductoDTO filtro) {
 
         String idClrCsv = listToCsv(filtro.getIdClr());
@@ -167,18 +169,18 @@ public class ProductoServiceImp implements ProductoService {
         );;
         
 
-        if (!productos.isEmpty()) {
-            SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(productos)
-                    .build();
-
-            return ResponseEntity.ok(success);
-        } else {
-            throw new IllegalArgumentException("No se encontraron productos para el modelo con ID: ");
+        if (productos.isEmpty()) {
+            throw new NoResultException("No se encontraron productos para el filtro enviado ");
         }
+        
+        SuccessResponse<List<Producto>> success = SuccessResponse.<List<Producto>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(productos)
+                .build();
+
+        return ResponseEntity.ok(success);
     }
 
     private String listToCsv(List<Integer> list) {

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,61 +14,65 @@ import com.cibertec.runner.model.Color;
 import com.cibertec.runner.repository.IColorRepository;
 import com.cibertec.runner.service.ColorService;
 
+import jakarta.persistence.NoResultException;
+
 @Service
 public class ColorServiceImp implements ColorService {
 
 	@Autowired
-	private IColorRepository colRepo;
+	private IColorRepository repository;
 
 	@Override
 	public ResponseEntity<SuccessResponse<List<Color>>> findAllColor() {
 
-		List<Color> colores = colRepo.findAll();
+		List<Color> colores = repository.findAll();
 
-		if (!colores.isEmpty()) {
-
-			SuccessResponse<List<Color>> success = SuccessResponse.<List<Color>>builder()
-			        .timestamp(LocalDateTime.now())
-			        .status(HttpStatus.CREATED.value())
-			        .success(HttpStatus.CREATED.getReasonPhrase())
-			        .response(colores)
-			        .build();
-			
-			return ResponseEntity.status(HttpStatus.OK).body(success);
-		} else {
-			throw new RuntimeException("No se encontro ningun color");
+		if (colores.isEmpty()) {
+			throw new NoResultException("No se encontro ningun color");
 		}
+		
+		SuccessResponse<List<Color>> success = SuccessResponse.<List<Color>>builder()
+		        .timestamp(LocalDateTime.now())
+		        .status(HttpStatus.OK.value())
+		        .success(HttpStatus.OK.getReasonPhrase())
+		        .response(colores)
+		        .build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(success);
 
 	}
 
 	@Override
 	public ResponseEntity<SuccessResponse<Color>> findByIdColor(Integer id){
 		
-		Color color = colRepo.findById(id).orElse(null);
+		Color color = repository.findById(id).orElse(null);
 
-		if (color != null) {
-			
-			SuccessResponse<Color> success = SuccessResponse.<Color>builder()
-			        .timestamp(LocalDateTime.now())
-			        .status(HttpStatus.CREATED.value())
-			        .success(HttpStatus.CREATED.getReasonPhrase())
-			        .response(color)
-			        .build();
-			
-			return ResponseEntity.status(HttpStatus.OK).body(success);
-		} else {
-			throw new RuntimeException("No se encontro ningun color");
+		if (color == null) {
+			throw new NoResultException("No se encontro el codigo de el color");
 		}
+		
+		SuccessResponse<Color> success = SuccessResponse.<Color>builder()
+		        .timestamp(LocalDateTime.now())
+		        .status(HttpStatus.OK.value())
+		        .success(HttpStatus.OK.getReasonPhrase())
+		        .response(color)
+		        .build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(success);
 	}
 
 	@Override
 	public ResponseEntity<SuccessResponse<Color>> saveColor(Color color){
-
+		
+		if(repository.existsByNombre(color.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+		
 		Color c = new Color();
 		
 		c.setNombre(color.getNombre());
 		
-		Color col = colRepo.save(c);
+		Color col = repository.save(c);
 
 		SuccessResponse<Color> success = SuccessResponse.<Color>builder()
 		        .timestamp(LocalDateTime.now())

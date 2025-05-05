@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.runner.model.Marca;
 
 @Repository
-public interface IMarcaRepository extends JpaRepository<Marca, Integer>{
+public interface IMarcaRepository extends JpaRepository<Marca, Integer> {
+	boolean existsByNombre(String nombre);
 }
-

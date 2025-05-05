@@ -2,7 +2,6 @@ package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,8 @@ import com.cibertec.runner.repository.IModeloRepository;
 import com.cibertec.runner.repository.IProductoRepository;
 import com.cibertec.runner.service.ModeloService;
 
+import jakarta.persistence.NoResultException;
+
 @Service
 public class ModeloServiceImp implements ModeloService{
 
@@ -34,18 +35,18 @@ public class ModeloServiceImp implements ModeloService{
     public ResponseEntity<SuccessResponse<List<Modelo>>> findAllModelos() {
         List<Modelo> modelos = dao.findAll();
 
-        if (!modelos.isEmpty()) {
-            SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(modelos)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("No existen Registros");
+        if (modelos.isEmpty()) {
+        	throw new NoResultException("No se encontro ningun modelo");
         }
+        
+        SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(modelos)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
@@ -76,72 +77,69 @@ public class ModeloServiceImp implements ModeloService{
     @Override
     public ResponseEntity<SuccessResponse<Modelo>> updateModelo(ModeloDTO modeloDTO, Integer id) {
 
-        Optional<Modelo> modEncontrada = dao.findById(id);
+        Modelo modEncontrada = dao.findById(id).orElse(null);
 
-        if (modEncontrada.isPresent()) {
-            Modelo modelo = modEncontrada.get();
+        if (modEncontrada == null) {
+        	throw new NoResultException("No se encontro el codigo del modelo");
+        } 
 
-            modelo.setDescripcion(modeloDTO.getDescripcion());
-            modelo.setInfo(modeloDTO.getInfo());
-            modelo.setEstado(true);
-            modelo.setPrecio(modeloDTO.getPrecio());
-            modelo.setIdCtg(modeloDTO.getIdCtg());
-            modelo.setIdMrc(modeloDTO.getIdMrc());
-            modelo.setIdPrn(modeloDTO.getIdPrn());
-            modelo.setIdMtl(modeloDTO.getIdMtl());
+        modEncontrada.setDescripcion(modeloDTO.getDescripcion());
+        modEncontrada.setInfo(modeloDTO.getInfo());
+        modEncontrada.setEstado(true);
+        modEncontrada.setPrecio(modeloDTO.getPrecio());
+        modEncontrada.setIdCtg(modeloDTO.getIdCtg());
+        modEncontrada.setIdMrc(modeloDTO.getIdMrc());
+        modEncontrada.setIdPrn(modeloDTO.getIdPrn());
+        modEncontrada.setIdMtl(modeloDTO.getIdMtl());
 
-            Modelo modeloActualizado = dao.save(modelo);
+        Modelo modeloActualizado = dao.save(modEncontrada);
 
-            SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(modeloActualizado)
-                    .build();
+        SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(modeloActualizado)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("Modelo no encontrado");
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Integer id) {
-        Optional<Modelo> modEncontrado = dao.findById(id);
+        Modelo modEncontrado = dao.findById(id).orElse(null);
 
-        if (modEncontrado.isPresent()) {
-            Modelo mod = modEncontrado.get();
-            mod.setEstado(false);
-            dao.save(mod);
+        if (modEncontrado == null) {
+        	throw new NoResultException("No se encontro el codigo del modelo");
+        }        	
+        modEncontrado.setEstado(false);
+        
+        dao.save(modEncontrado);
 
-            SuccessResponse<String> success = SuccessResponse.<String>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.NO_CONTENT.value())
-                    .success(HttpStatus.NO_CONTENT.getReasonPhrase())
-                    .response("Modelo eliminado correctamente")
-                    .build();
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NO_CONTENT.value())
+                .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+                .response("Modelo eliminado correctamente")
+                .build();
 
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
-        } else {
-            throw new RuntimeException("Sin registros para el ID: " + id);
-        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
     }
 
 	@Override
 	public ResponseEntity<SuccessResponse<Modelo>> findByIdModel(Integer id) {
 		Modelo modEncontrado = dao.findById(id).orElse(null);
-		if (modEncontrado != null) {
-			SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
-			        .timestamp(LocalDateTime.now())
-			        .status(HttpStatus.OK.value())
-			        .success(HttpStatus.OK.getReasonPhrase())
-			        .response(modEncontrado)
-			        .build();
-			
-			return ResponseEntity.status(HttpStatus.OK).body(success);
-		} else {
-			throw new RuntimeException("Problema al buscar el modelo");
+		if (modEncontrado == null) {
+        	throw new NoResultException("No se encontro el codigo del modelo");
 		}
+		
+		SuccessResponse<Modelo> success = SuccessResponse.<Modelo>builder()
+		        .timestamp(LocalDateTime.now())
+		        .status(HttpStatus.OK.value())
+		        .success(HttpStatus.OK.getReasonPhrase())
+		        .response(modEncontrado)
+		        .build();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(success);
 	}
 
 	@Override
@@ -162,6 +160,7 @@ public class ModeloServiceImp implements ModeloService{
         }
 	}
 	
+	@Override
 	@Transactional
     public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(FiltradoModeloDTO filtro) {
 
@@ -182,26 +181,35 @@ public class ModeloServiceImp implements ModeloService{
         );;
         
 
-        if (!productos.isEmpty()) {
-            SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(productos)
-                    .build();
-
-            return ResponseEntity.ok(success);
-        } else {
-            throw new IllegalArgumentException("No se encontraron modelos para el filtro enviado ");
+        if (productos.isEmpty()) {
+            throw new NoResultException("No se encontraron modelos para el filtro enviado ");
         }
         
-    }
+        SuccessResponse<List<Modelo>> success = SuccessResponse.<List<Modelo>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(productos)
+                .build();
 
+        return ResponseEntity.ok(success);
+        
+    }
+	
+	@Override
 	public ResponseEntity<SuccessResponse<ModeloProductoResponse>> findProductosByModelo(Integer id) {
 
 		Modelo modEncontrado = dao.findById(id).orElse(null);
-
+		
+		if (modEncontrado == null) {
+        	throw new NoResultException("No se encontro el codigo del modelo");
+		}
+		
         List<Producto> productos = repositoryProducto.findByIdMdl(modEncontrado.getId());
+        
+        if(productos.isEmpty()) {
+        	throw new NoResultException("No se encontro ningun producto registrado con ese modelo");
+        }
         
         ModeloProductoResponse mpResponse = new ModeloProductoResponse();
         mpResponse.setId(modEncontrado.getId());
@@ -219,7 +227,6 @@ public class ModeloServiceImp implements ModeloService{
         mpResponse.setMaterial(modEncontrado.getMaterial());
         mpResponse.setProducto(productos);
         
-        if (!productos.isEmpty()) {
             SuccessResponse<ModeloProductoResponse> success = SuccessResponse.<ModeloProductoResponse>builder()
                     .timestamp(LocalDateTime.now())
                     .status(HttpStatus.OK.value())
@@ -228,9 +235,7 @@ public class ModeloServiceImp implements ModeloService{
                     .build();
 
             return ResponseEntity.ok(success);
-        } else {
-            throw new IllegalArgumentException("No se encontraron modelos para el filtro enviado ");
-        }
+
     }
 
     private String listToCsv(List<Integer> list) {

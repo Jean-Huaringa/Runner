@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Distrito;
 import com.cibertec.runner.repository.IDistritoRepository;
 import com.cibertec.runner.service.DistritoService;
+
+import jakarta.persistence.NoResultException;
 
 @Service
 public class DistritoServiceImp implements DistritoService {
@@ -23,7 +26,9 @@ public class DistritoServiceImp implements DistritoService {
     public ResponseEntity<SuccessResponse<Distrito>> findByIdDistrito(Integer id) {
         Distrito distrito = repository.findById(id).orElse(null);
 
-        if (distrito != null) {
+        if (distrito == null) {
+			throw new NoResultException("No se encontro el codigo de la distrito");
+        }
             SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.OK.value())
@@ -32,16 +37,15 @@ public class DistritoServiceImp implements DistritoService {
                 .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("No se encuentra un registro para el ID: " + id);
-        }
     }
 
     @Override
     public ResponseEntity<SuccessResponse<List<Distrito>>> findAllDistrito() {
         List<Distrito> distritos = repository.findAll();
 
-        if (!distritos.isEmpty()) {
+        if (distritos.isEmpty()) {
+			throw new NoResultException("No se encontro ningun distrito");
+        }
             SuccessResponse<List<Distrito>> success = SuccessResponse.<List<Distrito>>builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.OK.value())
@@ -50,16 +54,14 @@ public class DistritoServiceImp implements DistritoService {
                 .build();
 
             return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("No existen registros de distrito");
-        }
     }
 
     @Override
     public ResponseEntity<SuccessResponse<Distrito>> saveDistrito(Distrito distrito) {
-        if (repository.existsByNombre(distrito.getNombre())) {
-            throw new RuntimeException("El distrito ya existe");
-        }
+    	
+		if(repository.existsByNombre(distrito.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
 
         Distrito dis = new Distrito();
 		dis.setNombre(distrito.getNombre());

@@ -2,9 +2,9 @@ package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,58 +15,62 @@ import com.cibertec.runner.model.Talla;
 import com.cibertec.runner.repository.ITallaRepository;
 import com.cibertec.runner.service.TallaService;
 
+import jakarta.persistence.NoResultException;
+
 
 @Service
 public class TallaServiceImp implements TallaService{
 	
 	@Autowired
-	private ITallaRepository talRepo;
+	private ITallaRepository repository;
 
     @Override
     public ResponseEntity<SuccessResponse<List<Talla>>> findAllTalla() {
-        List<Talla> tallas = talRepo.findAll(Sort.by("id").ascending());
+        List<Talla> tallas = repository.findAll(Sort.by("id").ascending());
 
-        if (!tallas.isEmpty()) {
-            SuccessResponse<List<Talla>> success = SuccessResponse.<List<Talla>>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(tallas)
-                    .build();
-
-            return ResponseEntity.status(HttpStatus.OK).body(success);
-        } else {
-            throw new RuntimeException("No existen registros de tallas");
+        if (tallas.isEmpty()) {
+        	throw new NoResultException("No se encontro ninguna talla");
         }
+        
+        SuccessResponse<List<Talla>> success = SuccessResponse.<List<Talla>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(tallas)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<Talla>> findByIdTalla(Integer id) {
-        Optional<Talla> talla = talRepo.findById(id);
+        Talla talla = repository.findById(id).orElse(null);
 
-        if (talla.isPresent()) {
-            SuccessResponse<Talla> success = SuccessResponse.<Talla>builder()
-                    .timestamp(LocalDateTime.now())
-                    .status(HttpStatus.OK.value())
-                    .success(HttpStatus.OK.getReasonPhrase())
-                    .response(talla.get())
-                    .build();
-
-            return ResponseEntity.ok(success);
-        } else {
-            throw new RuntimeException("No se encuentra un registro para el ID: " + id);
+        if (talla == null) {
+        	throw new NoResultException("No se encontro el codigo de la talla");
         }
+        
+        SuccessResponse<Talla> success = SuccessResponse.<Talla>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(talla)
+                .build();
+
+        return ResponseEntity.ok(success);
     }
 
     @Override
     public ResponseEntity<SuccessResponse<Talla>> saveTalla(Talla talla) {
-        if (talRepo.existsByNombre(talla.getNombre())) {
-            throw new RuntimeException("La talla ya existe");
-        }
+    	
+    	if(repository.existsByNombre(talla.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+        
 
         Talla newTalla = new Talla();
         newTalla.setNombre(talla.getNombre());
-        Talla tallaGuardada = talRepo.save(newTalla);
+        Talla tallaGuardada = repository.save(newTalla);
 
         SuccessResponse<Talla> success = SuccessResponse.<Talla>builder()
                 .timestamp(LocalDateTime.now())

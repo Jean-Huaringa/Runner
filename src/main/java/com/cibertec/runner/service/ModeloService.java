@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.cibertec.runner.dto.request.FiltradoModeloDTO;
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.ModeloProductoResponse;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Modelo;
 
@@ -21,5 +23,8 @@ public interface ModeloService {
 	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(Integer id);
 
 	public ResponseEntity<SuccessResponse<List<Modelo>>> findByIdMrc(Integer id);
-
+	
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(FiltradoModeloDTO filtro);
+	
+	public ResponseEntity<SuccessResponse<ModeloProductoResponse>> findProductosByModelo(Integer id);
 }

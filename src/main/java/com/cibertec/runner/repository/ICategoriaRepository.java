@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.runner.model.Categoria;
 
 @Repository
-public interface ICategoriaRepository extends JpaRepository<Categoria, Integer>{
+public interface ICategoriaRepository extends JpaRepository<Categoria, Integer> {
+	boolean existsByNombre(String nombre);
 }
