@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cibertec.runner.dto.request.FiltradoModeloDTO;
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.ModeloProductoResponse;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Modelo;
 import com.cibertec.runner.service.implement.ModeloServiceImp;
@@ -59,5 +60,10 @@ public class ModeloController {
 	@PostMapping("/filtros")
 	public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(@RequestBody FiltradoModeloDTO filtro) {
 	    return modeloService.findByAttributes(filtro);
+	}
+	
+	@GetMapping("/productos-modelo/{id}")
+	public ResponseEntity<SuccessResponse<ModeloProductoResponse>> findProductosByModelo(@PathVariable Integer id) {
+	    return modeloService.findProductosByModelo(id);
 	}
 }

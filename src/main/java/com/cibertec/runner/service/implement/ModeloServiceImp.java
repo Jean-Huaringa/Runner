@@ -13,16 +13,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cibertec.runner.dto.request.FiltradoModeloDTO;
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.ModeloProductoResponse;
 import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Modelo;
+import com.cibertec.runner.model.Producto;
 import com.cibertec.runner.repository.IModeloRepository;
+import com.cibertec.runner.repository.IProductoRepository;
 import com.cibertec.runner.service.ModeloService;
 
 @Service
 public class ModeloServiceImp implements ModeloService{
-	
+
 	@Autowired
 	private IModeloRepository dao;
+	@Autowired
+	private IProductoRepository repositoryProducto;
 	
 
     @Override
@@ -157,7 +162,7 @@ public class ModeloServiceImp implements ModeloService{
         }
 	}
 	
-    @Transactional
+	@Transactional
     public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(FiltradoModeloDTO filtro) {
 
         String idClrCsv = listToCsv(filtro.getIdClr());
@@ -166,8 +171,6 @@ public class ModeloServiceImp implements ModeloService{
         String idMrcCsv = listToCsv(filtro.getIdMrc());
         String idPrnCsv = listToCsv(filtro.getIdPrn());
         String idMtlCsv = listToCsv(filtro.getIdMtl());
-        
-        System.out.println(filtro.getIdClr().toString());
 
         List<Modelo> productos = dao.filtrarModelos(
             idClrCsv, 
@@ -185,6 +188,43 @@ public class ModeloServiceImp implements ModeloService{
                     .status(HttpStatus.OK.value())
                     .success(HttpStatus.OK.getReasonPhrase())
                     .response(productos)
+                    .build();
+
+            return ResponseEntity.ok(success);
+        } else {
+            throw new IllegalArgumentException("No se encontraron modelos para el filtro enviado ");
+        }
+        
+    }
+
+	public ResponseEntity<SuccessResponse<ModeloProductoResponse>> findProductosByModelo(Integer id) {
+
+		Modelo modEncontrado = dao.findById(id).orElse(null);
+
+        List<Producto> productos = repositoryProducto.findByIdMdl(modEncontrado.getId());
+        
+        ModeloProductoResponse mpResponse = new ModeloProductoResponse();
+        mpResponse.setId(modEncontrado.getId());
+        mpResponse.setDescripcion(modEncontrado.getDescripcion());
+        mpResponse.setInfo(modEncontrado.getInfo());
+        mpResponse.setEstado(modEncontrado.getEstado());
+        mpResponse.setPrecio(modEncontrado.getPrecio());
+        mpResponse.setIdCtg(modEncontrado.getIdCtg());
+        mpResponse.setIdMrc(modEncontrado.getIdMrc());
+        mpResponse.setIdPrn(modEncontrado.getIdPrn());
+        mpResponse.setIdMtl(modEncontrado.getIdMtl());
+        mpResponse.setCategoria(modEncontrado.getCategoria());
+        mpResponse.setMarca(modEncontrado.getMarca());
+        mpResponse.setPersona(modEncontrado.getPersona());
+        mpResponse.setMaterial(modEncontrado.getMaterial());
+        mpResponse.setProducto(productos);
+        
+        if (!productos.isEmpty()) {
+            SuccessResponse<ModeloProductoResponse> success = SuccessResponse.<ModeloProductoResponse>builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpStatus.OK.value())
+                    .success(HttpStatus.OK.getReasonPhrase())
+                    .response(mpResponse)
                     .build();
 
             return ResponseEntity.ok(success);
