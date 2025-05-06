@@ -25,5 +25,5 @@ public class ModeloProductoResponse {
     private Marca marca;
     private Persona persona;
     private Material material;
-    private List<Producto> producto;
+    private List<Producto> productos;
 }

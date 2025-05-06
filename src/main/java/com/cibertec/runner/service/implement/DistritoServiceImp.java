@@ -77,4 +77,51 @@ public class DistritoServiceImp implements DistritoService {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
+
+	@Override
+	public ResponseEntity<SuccessResponse<Distrito>> updateDistrito(Distrito distrito, Integer id) {
+
+		if(repository.existsByNombre(distrito.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+		
+		Distrito existente = repository.findById(id).orElse(null);
+
+        if (existente == null) {
+        	throw new NoResultException("No se encontro el codigo de material");
+        }
+
+        existente.setNombre(distrito.getNombre());
+        
+        Distrito actualizado = repository.save(existente);
+
+        SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(actualizado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<String>> deleteDistrito(Integer id) {
+		Distrito distrito= repository.findById(id).orElse(null);
+
+        if (distrito == null) {
+        	throw new NoResultException("No se encontro el codigo de el distrito");
+        }
+        
+        repository.delete(distrito);
+
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response("Distrito eliminado correctamente")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
 }

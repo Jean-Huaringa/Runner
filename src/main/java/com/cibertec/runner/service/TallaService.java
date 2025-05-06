@@ -14,5 +14,9 @@ public interface TallaService {
 	public ResponseEntity<SuccessResponse<Talla>> findByIdTalla(Integer id);
 	
 	public ResponseEntity<SuccessResponse<Talla>> saveTalla(Talla talla);
+	
+	public ResponseEntity<SuccessResponse<Talla>> updateTallla(Talla talla, Integer id);
+	
+	public ResponseEntity<SuccessResponse<String>> deleteTalla(Integer id);
 
 }

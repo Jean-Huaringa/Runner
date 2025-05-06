@@ -84,4 +84,52 @@ public class ColorServiceImp implements ColorService {
 		return ResponseEntity.status(HttpStatus.CREATED).body(success);
 	}
 
+	@Override
+	public ResponseEntity<SuccessResponse<Color>> updateColor(Color color, Integer id) {
+
+		if(repository.existsByNombre(color.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+		
+        Color existente = repository.findById(id).orElse(null);
+
+        if (existente == null) {
+        	throw new NoResultException("No se encontro el codigo de material");
+        }
+
+        existente.setNombre(color.getNombre());
+        
+        Color actualizado = repository.save(existente);
+
+        SuccessResponse<Color> success = SuccessResponse.<Color>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(actualizado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
+
+	
+	@Override
+	public ResponseEntity<SuccessResponse<String>> deleteByIdColor(Integer id) {
+
+        Color color= repository.findById(id).orElse(null);
+
+        if (color == null) {
+        	throw new NoResultException("No se encontro el codigo de la marca");
+        }
+        
+        repository.delete(color);
+
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response("Marca eliminada correctamente")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
 }

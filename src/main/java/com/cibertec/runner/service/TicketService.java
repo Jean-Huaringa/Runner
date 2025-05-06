@@ -9,22 +9,15 @@ import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Ticket;
 
 public interface TicketService {
-	
-    /// Listados Todos
-    public ResponseEntity<SuccessResponse<List<Ticket>>> findAllTickets();
-    /// Obtener por ID
-    public ResponseEntity<SuccessResponse<Ticket>> findByIdTicket(Integer id);
-    
-    /// Registrar
-    public ResponseEntity<SuccessResponse<Ticket>> saveTicket(TicketDTO ticketDTO);
 
-    /// Actualizar
-   public ResponseEntity< SuccessResponse<Ticket>> updateTicket(TicketDTO ticketDTO, Integer id);
+	public ResponseEntity<SuccessResponse<List<Ticket>>> findAllTickets();
 
-   //Eliminar de manera permanente
-   public  ResponseEntity<SuccessResponse<String>> deleteTicket(Integer id);
+	public ResponseEntity<SuccessResponse<Ticket>> findByIdTicket(Integer id);
 
+	public ResponseEntity<SuccessResponse<Ticket>> saveTicket(TicketDTO ticketDTO);
 
+	public ResponseEntity<SuccessResponse<Ticket>> updateTicket(TicketDTO ticketDTO, Integer id);
 
+	public ResponseEntity<SuccessResponse<String>> deleteTicket(Integer id);
 
 }

@@ -16,4 +16,8 @@ public interface DistritoService {
 	public ResponseEntity<SuccessResponse<List<Distrito>>> findAllDistrito();
 	
 	public ResponseEntity<SuccessResponse<Distrito>> saveDistrito(Distrito distrito);
+	
+	public ResponseEntity<SuccessResponse<Distrito>> updateDistrito(Distrito distrito, Integer id);
+	
+	public ResponseEntity<SuccessResponse<String>> deleteDistrito(Integer i);
 }

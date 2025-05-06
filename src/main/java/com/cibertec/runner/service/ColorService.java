@@ -16,4 +16,7 @@ public interface ColorService {
 	
 	public ResponseEntity<SuccessResponse<Color>> saveColor(Color color);
 
+	public ResponseEntity<SuccessResponse<Color>> updateColor(Color color, Integer id);
+
+	public ResponseEntity<SuccessResponse<String>> deleteByIdColor(Integer id);
 }

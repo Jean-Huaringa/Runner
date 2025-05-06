@@ -9,18 +9,13 @@ import com.cibertec.runner.model.Marca;
 
 public interface MarcaService {
 
-	// LISTADO GENERAL DE MARCAS
 	public ResponseEntity<SuccessResponse<List<Marca>>> findAllListMarcas();
 	
-	// BUSQUEDA DE MARCA POR ID
 	public ResponseEntity<SuccessResponse<Marca>> findByIdMarca(Integer id);
 	
-	// CREAR MARCA
 	public ResponseEntity<SuccessResponse<Marca>> saveMarca(Marca m);
 	
-	// ACTUALIZAR MARCA
 	public ResponseEntity<SuccessResponse<Marca>> updateMarca(Marca m, Integer id);
 	
-	// ELIMINAR MARCA
 	public ResponseEntity<SuccessResponse<String>> deleteByIdMarca(Integer id);
 }

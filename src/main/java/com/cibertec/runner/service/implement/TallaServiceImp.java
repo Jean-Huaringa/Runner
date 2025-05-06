@@ -81,4 +81,50 @@ public class TallaServiceImp implements TallaService{
 
         return ResponseEntity.status(HttpStatus.CREATED).body(success);
     }
+
+	@Override
+	public ResponseEntity<SuccessResponse<Talla>> updateTallla(Talla talla, Integer id) {
+		if(repository.existsByNombre(talla.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+		
+		Talla existente = repository.findById(id).orElse(null);
+
+        if (existente == null) {
+        	throw new NoResultException("No se encontro el codigo de material");
+        }
+
+        existente.setNombre(talla.getNombre());
+        
+        Talla actualizado = repository.save(existente);
+
+        SuccessResponse<Talla> success = SuccessResponse.<Talla>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(actualizado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
+
+	@Override
+	public ResponseEntity<SuccessResponse<String>> deleteTalla(Integer id) {
+		Talla talla = repository.findById(id).orElse(null);
+
+        if (talla == null) {
+        	throw new NoResultException("No se encontro el codigo de el distrito");
+        }
+        
+        repository.delete(talla);
+
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response("Distrito eliminado correctamente")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+	}
 }

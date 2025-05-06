@@ -225,7 +225,7 @@ public class ModeloServiceImp implements ModeloService{
         mpResponse.setMarca(modEncontrado.getMarca());
         mpResponse.setPersona(modEncontrado.getPersona());
         mpResponse.setMaterial(modEncontrado.getMaterial());
-        mpResponse.setProducto(productos);
+        mpResponse.setProductos(productos);
         
             SuccessResponse<ModeloProductoResponse> success = SuccessResponse.<ModeloProductoResponse>builder()
                     .timestamp(LocalDateTime.now())
