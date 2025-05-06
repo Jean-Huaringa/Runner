@@ -120,12 +120,12 @@ public class ProductoServiceImp implements ProductoService {
 
         SuccessResponse<String> success = SuccessResponse.<String>builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.NO_CONTENT.value())
-                .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
                 .response("Producto eliminado correctamente")
                 .build();
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
+        return ResponseEntity.status(HttpStatus.OK).body(success);
     }
 
     @Override
