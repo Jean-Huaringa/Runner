@@ -1,169 +1,131 @@
 package com.cibertec.runner.service.implement;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Marca;
 import com.cibertec.runner.repository.IMarcaRepository;
 import com.cibertec.runner.service.MarcaService;
 
+import jakarta.persistence.NoResultException;
+
 @Service
-public class MarcaServiceImp implements MarcaService{
-	
-	@Autowired
-	private IMarcaRepository dao;
+public class MarcaServiceImp implements MarcaService {
 
-	@Override
-	public ResponseEntity<Map<String, Object>> findAllListMarcas() {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LISTADO DE MARCAS
-		List<Marca> marcas = dao.findAll();
-		
-		// VERIFICAR SI LA LISTA ESTA VACIA
-		if(!marcas.isEmpty()) {
-			// MENSAJE CON ENVIO DE LISTADO
-			respuesta.put("mensaje", "Listado de marcas");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("marcas", marcas);
-			
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			// MENSAJE SI LA LISTA ESTA VACIA
-			respuesta.put("mensaje", "No existen registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
+    @Autowired
+    private IMarcaRepository repository;
 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-	}
+    @Override
+    public ResponseEntity<SuccessResponse<List<Marca>>> findAllListMarcas() {
 
-	@Override
-	public ResponseEntity<Map<String, Object>> findByIdMarca(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR ID
-		Optional<Marca> marca = dao.findById(id);
-		
-		// VERIFICA SI LA MARCA EXISTE
-		if(marca.isPresent()) {
-			// MENSAJE CON LA MARCA ENCONTRADA
-			respuesta.put("mensaje", "Marca encontrada");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("categoria", marca.get());
-			
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			// MENSAJE SI NO ENCUENTRA MARCA
-			respuesta.put("mensaje", "No se encuentran registros con el ID: " + id);
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-	}
+        List<Marca> marcas = repository.findAll();
 
-	@Override
-	public ResponseEntity<Map<String, Object>> saveMarca(Marca m) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		
-		try {
-			// REALIZA REGISTRO
-			dao.save(m);
-			
-			// MENSAJE DE EXITO EN EL CREACION
-			respuesta.put("mensaje", "Marca creada");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("marca", m);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		} catch (Exception e) {
-			// MENSAJE EN CASO DE ERROR EN LA CREACION
-			respuesta.put("mensaje", "Error al crear marca");
-			respuesta.put("error", e.getMessage());
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);			
-		}
-	}
+        if (marcas.isEmpty()) {
+        	throw new NoResultException("No se encontro ninguna marca");
+        }
+        
+        SuccessResponse<List<Marca>> success = SuccessResponse.<List<Marca>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(marcas)
+                .build();
 
-	@Override
-	public ResponseEntity<Map<String, Object>> updateMarca(Marca m, Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR SU ID
-		Optional<Marca> buscaMarca = dao.findById(id);
-		
-		// VERIFICA SI LA CATEGORIA YA EXISTE EN LA BD
-		if(!buscaMarca.isPresent()) {
-			// MENSAJE EN CASO LA MARCA NO EXISTE
-			respuesta.put("mensaje", "La marca con el ID especificado no existe");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Marca>> findByIdMarca(Integer id) {
+
+        Marca marca = repository.findById(id).orElse(null);
+
+        if (marca == null) {
+        	throw new NoResultException("No se encontro el codigo de la marca");
+        }
+        
+        SuccessResponse<Marca> success = SuccessResponse.<Marca>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(marca)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Marca>> saveMarca(Marca marca) {
+    	
+		if(repository.existsByNombre(marca.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
 		}
 		
-		try {
-			// ACTUALIZA VALORES DE LA CATEGORIA A ACTUALIZAR
-			Marca marcaActual = buscaMarca.get();
-			marcaActual.setNombre(m.getNombre());
-			
-			// CAPTURA MARCA ACTUALIZADA
-			Marca marcaActualizada = dao.save(marcaActual);
-			
-			// MENSAJE DE EXITO EN LA ACTUALIZACION
-			respuesta.put("mensaje", "Marca actualizada con exito");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.CREATED);
-			respuesta.put("marca", marcaActualizada);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-		} catch (Exception e) {
-			// MENSAJE EN CASO DE ERROR
-			respuesta.put("mensaje", "Error al actualizar marca");
-			respuesta.put("error", e.getMessage());
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
-		}
-	}
+    	Marca mar = new Marca();
+		mar.setNombre(marca.getNombre());
+        Marca nuevaMarca = repository.save(mar);
 
-	@Override
-	public ResponseEntity<Map<String, Object>> deleteByIdMarca(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		// CAPTURA LA MARCA BUSCADA POR SU ID
-		Optional<Marca> buscaMarca = dao.findById(id);
+        SuccessResponse<Marca> success = SuccessResponse.<Marca>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CREATED.value())
+                .success(HttpStatus.CREATED.getReasonPhrase())
+                .response(nuevaMarca)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Marca>> updateMarca(Marca marca, Integer id) {
+
+		if(repository.existsByNombre(marca.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
 		
-		// VERIFICA SI LA CATEGORIA EXISTE
-		if (buscaMarca.isPresent()) {
-			// ELIMINA LA MARCA
-			dao.delete(buscaMarca.get());
-			
-			// MENSAJE EN CASO DE EXITO EN LA ELIMINACION
-			respuesta.put("mensaje", "Marca eliminada con exito");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
+        Marca existente = repository.findById(id).orElse(null);
 
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			// MENSAJE EN CASO DE ERROR EN LA ELIMINACION
-			respuesta.put("mensaje", "Error al eliminar, no se encuentran registros con el ID: " + id);
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
+        if (existente == null) {
+        	throw new NoResultException("No se encontro el codigo de la marca");
+        }
 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-	}
+        existente.setNombre(marca.getNombre());
 
+        Marca actualizada = repository.save(existente);
+
+        SuccessResponse<Marca> success = SuccessResponse.<Marca>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(actualizada)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<String>> deleteByIdMarca(Integer id) {
+
+        Marca marca = repository.findById(id).orElse(null);
+
+        if (marca == null) {
+        	throw new NoResultException("No se encontro el codigo de la marca");
+        }
+        
+        repository.delete(marca);
+
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response("Marca eliminada correctamente")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
 }

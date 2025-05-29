@@ -22,9 +22,12 @@ public class JwtService {
 		return Keys.hmacShaKeyFor(Base64.getEncoder().encode(secretKey.getBytes()));
 	}
 
-	public String generateToken(String mail) {
+	public String generateToken(String mail, String role, String name) {
 
-		return Jwts.builder().setSubject(mail)
+		return Jwts.builder()
+				.setSubject(mail)
+                .claim("role", role)
+                .claim("name", name)
 				.setIssuedAt(new Date()) 
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // el ultimo son los minutos que dura el token en minutos 
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256)

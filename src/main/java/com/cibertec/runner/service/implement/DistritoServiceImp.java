@@ -1,90 +1,127 @@
 package com.cibertec.runner.service.implement;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Distrito;
 import com.cibertec.runner.repository.IDistritoRepository;
 import com.cibertec.runner.service.DistritoService;
 
+import jakarta.persistence.NoResultException;
+
 @Service
-public class DistritoServiceImp implements DistritoService{
-	@Autowired
-	private IDistritoRepository repository;
-	
-	@Override
-	public ResponseEntity<Map<String, Object>> findByIdDistrito(Integer id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		Optional<Distrito> distrito = repository.findById(id);
+public class DistritoServiceImp implements DistritoService {
 
-		if (distrito.isPresent()) {
-			respuesta.put("mensaje", "Color Encontrada");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("color", distrito.get());
-			return ResponseEntity.ok().body(respuesta);
-		} else {
-			respuesta.put("mensaje", "No se encuentra un registro para el ID: " + id);
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+    @Autowired
+    private IDistritoRepository repository;
+
+    @Override
+    public ResponseEntity<SuccessResponse<Distrito>> findByIdDistrito(Integer id) {
+        Distrito distrito = repository.findById(id).orElse(null);
+
+        if (distrito == null) {
+			throw new NoResultException("No se encontro el codigo de la distrito");
+        }
+            SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(distrito)
+                .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<List<Distrito>>> findAllDistrito() {
+        List<Distrito> distritos = repository.findAll();
+
+        if (distritos.isEmpty()) {
+			throw new NoResultException("No se encontro ningun distrito");
+        }
+            SuccessResponse<List<Distrito>> success = SuccessResponse.<List<Distrito>>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(distritos)
+                .build();
+
+            return ResponseEntity.status(HttpStatus.OK).body(success);
+    }
+
+    @Override
+    public ResponseEntity<SuccessResponse<Distrito>> saveDistrito(Distrito distrito) {
+    	
+		if(repository.existsByNombre(distrito.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
 		}
+
+        Distrito dis = new Distrito();
+		dis.setNombre(distrito.getNombre());
+		
+        Distrito savedDistrito = repository.save(dis);
+
+        SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.CREATED.value())
+            .success(HttpStatus.CREATED.getReasonPhrase())
+            .response(savedDistrito)
+            .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(success);
+    }
+
+	@Override
+	public ResponseEntity<SuccessResponse<Distrito>> updateDistrito(Distrito distrito, Integer id) {
+
+		if(repository.existsByNombre(distrito.getNombre())) {
+			throw new DataIntegrityViolationException("Error en duplicidad de datos");
+		}
+		
+		Distrito existente = repository.findById(id).orElse(null);
+
+        if (existente == null) {
+        	throw new NoResultException("No se encontro el codigo de material");
+        }
+
+        existente.setNombre(distrito.getNombre());
+        
+        Distrito actualizado = repository.save(existente);
+
+        SuccessResponse<Distrito> success = SuccessResponse.<Distrito>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response(actualizado)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(success);
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> findAllListDistrito() {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
+	public ResponseEntity<SuccessResponse<String>> deleteDistrito(Integer id) {
+		Distrito distrito= repository.findById(id).orElse(null);
 
-		List<Distrito> distrito = repository.findAll(Sort.by("id").ascending());
+        if (distrito == null) {
+        	throw new NoResultException("No se encontro el codigo de el distrito");
+        }
+        
+        repository.delete(distrito);
 
-		if (!distrito.isEmpty()) {
-			respuesta.put("mensaje", "Lista de Colores");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.OK);
-			respuesta.put("Colores", distrito);
-			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		} else {
-			respuesta.put("mensaje", "No existen registros");
-			respuesta.put("fecha", new Date());
-			respuesta.put("status", HttpStatus.NOT_FOUND);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		}
-	}
+        SuccessResponse<String> success = SuccessResponse.<String>builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.OK.value())
+                .success(HttpStatus.OK.getReasonPhrase())
+                .response("Distrito eliminado correctamente")
+                .build();
 
-	@Override
-	public ResponseEntity<Map<String, Object>> saveDistrito(Distrito distrito) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		String fechaActual = LocalDateTime.now().format(formatter);
-
-		// valida que el color no se repita y lo compara con el parametro de entrada en
-		// este caso para el ombre del color
-		if (repository.existsByNombre(distrito.getNombre())) {
-			respuesta.put("mensaje", "El Color ya existe");
-			respuesta.put("fecha", fechaActual);
-			respuesta.put("status", HttpStatus.CONFLICT);
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
-		}
-
-		// guarda todo el objeto color, osea lo registra
-		repository.save(distrito);
-		respuesta.put("mensaje", "Se creó correctamente el Color");
-		respuesta.put("fecha", fechaActual);
-		respuesta.put("status", HttpStatus.CREATED);
-		respuesta.put("color", distrito);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+        return ResponseEntity.status(HttpStatus.OK).body(success);
 	}
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.runner.model.Color;
 
 @Repository
-public interface IColorRepository extends JpaRepository<Color, Integer>{
-	
+public interface IColorRepository extends JpaRepository<Color, Integer> {
+
 	boolean existsByNombre(String nombre);
 }

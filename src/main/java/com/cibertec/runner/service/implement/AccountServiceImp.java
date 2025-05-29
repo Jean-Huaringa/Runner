@@ -75,6 +75,7 @@ public class AccountServiceImp implements AccountService{
 		} else {
 			throw new RuntimeException("No se encontro un distrito");
 		}
+		userRepository.save(user);
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class AccountServiceImp implements AccountService{
 		Usuario usuario = userRepository.findByCorreo(request.getCorreo()).orElse(null);
 
 		if (usuario != null && passwordEncoder.matches(request.getContrasenia(), usuario.getContrasenia())) {
-			return jwtService.generateToken(request.getCorreo());
+			return jwtService.generateToken(usuario.getCorreo(), usuario.getRol(), usuario.getNombre());
 		} else {
 			throw new BadCredentialsException("Usuario y/o contraseña incorrecta");
 		}
