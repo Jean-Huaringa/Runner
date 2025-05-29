@@ -1,6 +1,6 @@
 package com.cibertec.runner.controller;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cibertec.runner.dto.request.FiltradoModeloDTO;
 import com.cibertec.runner.dto.request.ModeloDTO;
+import com.cibertec.runner.dto.response.ModeloProductoResponse;
+import com.cibertec.runner.dto.response.SuccessResponse;
+import com.cibertec.runner.model.Modelo;
 import com.cibertec.runner.service.implement.ModeloServiceImp;
 
 @RestController
@@ -24,22 +28,42 @@ public class ModeloController {
 	private ModeloServiceImp modeloService;
 	
 	@GetMapping
-	public ResponseEntity<Map<String, Object>> findAllModelos(){
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findAllModelos(){
 		return modeloService.findAllModelos();
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<SuccessResponse<Modelo>> findByIdModelos(@PathVariable Integer id){
+		return modeloService.findByIdModel(id);
+	}
+	
 	@PostMapping
-    public ResponseEntity<Map<String, Object>> saveModelo(@RequestBody ModeloDTO modeloDTO) {
+    public ResponseEntity<SuccessResponse<Modelo>> saveModelo(@RequestBody ModeloDTO modeloDTO) {
         return modeloService.saveModelo(modeloDTO);
     }
 	
 	@PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateModelo(@RequestBody ModeloDTO modeloDTO, @PathVariable Long id) {
+    public ResponseEntity<SuccessResponse<Modelo>> updateModelo(@RequestBody ModeloDTO modeloDTO, @PathVariable Integer id) {
         return modeloService.updateModelo(modeloDTO, id);
     }
 	
-	@DeleteMapping("/logico/{id}")
-	public ResponseEntity<Map<String, Object>> deleteByIdModelo(@PathVariable Long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<SuccessResponse<String>> deleteByIdModelo(@PathVariable Integer id) {
 	    return modeloService.deleteByIdModelo(id);
+	}
+	
+	@GetMapping("/marca/{idMrc}")
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByIdMrc(@PathVariable Integer idMrc) {
+	    return modeloService.findByIdMrc(idMrc);
+	}
+	
+	@PostMapping("/filtros")
+	public ResponseEntity<SuccessResponse<List<Modelo>>> findByAttributes(@RequestBody FiltradoModeloDTO filtro) {
+	    return modeloService.findByAttributes(filtro);
+	}
+	
+	@GetMapping("/productos-modelo/{id}")
+	public ResponseEntity<SuccessResponse<ModeloProductoResponse>> findProductosByModelo(@PathVariable Integer id) {
+	    return modeloService.findProductosByModelo(id);
 	}
 }

@@ -57,16 +57,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			}
 
 		} catch (ExpiredJwtException e) {
-			JsonResponse.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "Token expirado");
+			JsonResponse.ErrorEstructura(response, HttpServletResponse.SC_UNAUTHORIZED, "Token expirado");
 		    return;
 		} catch (SignatureException | MalformedJwtException e) {
-			JsonResponse.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o manipulado");
+			JsonResponse.ErrorEstructura(response, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o manipulado");
 		    return;
 		} catch (Exception e) {
-			JsonResponse.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, "Error al procesar el token");
+			JsonResponse.ErrorEstructura(response, HttpServletResponse.SC_UNAUTHORIZED, "Error al procesar el token");
 		    return;
 		}
 
-		filterChain.doFilter(request, response); // Continúa con la cadena de filtros
+		filterChain.doFilter(request, response);
 	}
 }

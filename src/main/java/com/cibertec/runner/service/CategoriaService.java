@@ -1,26 +1,22 @@
 package com.cibertec.runner.service;
 
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Categoria;
 
 public interface CategoriaService {
 
-	// LISTADO GENERAL DE CATEGORIAS
-	public ResponseEntity<Map<String, Object>> findAllListCategoria();
+	public ResponseEntity<SuccessResponse<List<Categoria>>> findAllListCategoria();
 	
-	// BUSQUEDA DE CATEGORIA POR SU ID
-	public ResponseEntity<Map<String, Object>> findByIdCategoria(Integer id);
+	public ResponseEntity<SuccessResponse<Categoria>> findByIdCategoria(Integer id);
 	
-	// CREAR CATEGORIA
-	public ResponseEntity<Map<String, Object>> saveCategoria(Categoria c);
+	public ResponseEntity<SuccessResponse<Categoria>> saveCategoria(Categoria c);
 	
-	// ACTUALIZAR CATEGORIA
-	public ResponseEntity<Map<String, Object>> updateCategoria(Categoria c, Integer id);
+	public ResponseEntity<SuccessResponse<Categoria>> updateCategoria(Categoria c, Integer id);
 	
-	// ELIMINAR CATEGORIA
-	public ResponseEntity<Map<String, Object>> deleteByIdCategoria(Integer id);
+	public ResponseEntity<SuccessResponse<String>> deleteByIdCategoria(Integer id);
 	
 }

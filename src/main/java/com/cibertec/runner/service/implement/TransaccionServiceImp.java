@@ -1,8 +1,7 @@
 package com.cibertec.runner.service.implement;
 
-import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.cibertec.runner.dto.response.SuccessResponse;
 import com.cibertec.runner.model.Transaccion;
 import com.cibertec.runner.model.TransaccionId;
 import com.cibertec.runner.repository.ITransacionRepository;
@@ -35,25 +35,23 @@ public class TransaccionServiceImp implements TransaccionService {
 	}
 
 	@Override
-	public ResponseEntity<Map<String, Object>> deleteByIdTransaccion(TransaccionId id) {
-		Map<String, Object> respuesta = new LinkedHashMap<>();
-		
-		 
-		 Optional<Transaccion> transaccionExiste = iTransaccionRepository.findById(id);
-		 
-		 if (transaccionExiste.isPresent()) {
-			 iTransaccionRepository.delete(transaccionExiste.get());
-		        respuesta.put("mensaje", "Transaccion eliminada con éxito");
-		        respuesta.put("status", HttpStatus.OK);
+	public ResponseEntity<SuccessResponse<String>> deleteByIdTransaccion(TransaccionId id) {
+	    Optional<Transaccion> transaccionExiste = iTransaccionRepository.findById(id);
 
-		        return ResponseEntity.status(HttpStatus.OK).body(respuesta);
-		    } else {
-		        respuesta.put("mensaje", "No se realizo la Eliminacion, Transaccion no encontrada");
-		        respuesta.put("status", HttpStatus.NOT_FOUND);
+	    if (transaccionExiste.isPresent()) {
+	        iTransaccionRepository.delete(transaccionExiste.get());
 
-		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
-		    }
-		
+	        SuccessResponse<String> success = SuccessResponse.<String>builder()
+	                .timestamp(LocalDateTime.now())
+	                .status(HttpStatus.NO_CONTENT.value())
+	                .success(HttpStatus.NO_CONTENT.getReasonPhrase())
+	                .response("Transacción eliminada con éxito")
+	                .build();
+
+	        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(success);
+	    } else {
+	        throw new RuntimeException("No se realizó la eliminación, transacción no encontrada");
+	    }
 	}
 	
 	

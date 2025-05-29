@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.cibertec.runner.model.Material;
 
 @Repository
-public interface IMaterialRepository extends JpaRepository<Material, Integer>{
+public interface IMaterialRepository extends JpaRepository<Material, Integer> {
+	boolean existsByNombre(String nombre);
 }
